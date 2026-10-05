@@ -10,17 +10,17 @@ export function Footer() {
     <footer className="relative overflow-hidden bg-ink pt-20 pb-8 text-paper">
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center overflow-hidden"
+        className="pointer-events-none absolute inset-x-0 bottom-[-4%] flex justify-center overflow-hidden opacity-[0.06]"
       >
-        <span className="select-none font-display text-[clamp(6rem,22vw,18rem)] leading-none font-bold tracking-[-0.06em] text-white/[0.04]">
-          allin
-        </span>
+        <Logo variant="light" className="h-auto w-[min(90vw,920px)]" />
       </div>
 
       <div className="relative mx-auto max-w-[1400px] px-5 md:px-8 lg:px-10">
         <div className="grid gap-12 lg:grid-cols-[1.1fr_2fr]">
           <div>
-            <Logo variant="light" className="h-8 w-[110px]" />
+            <a href="#top" aria-label="All In home">
+              <Logo variant="light" className="h-9 w-[176px]" />
+            </a>
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-paper/60">
               {t.footer.tagline}
             </p>

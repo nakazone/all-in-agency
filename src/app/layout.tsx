@@ -32,6 +32,10 @@ export const metadata: Metadata = {
   title: "All In — Digital Agency | Websites, Landing Pages & Web Apps",
   description:
     "Bilingual digital agency (Brazil + USA) building high-performance websites, landing pages, and web applications for ambitious brands.",
+  icons: {
+    icon: "/logo-dark.png",
+    apple: "/apple-icon.png",
+  },
   openGraph: {
     title: "All In — Digital Agency",
     description:
@@ -40,12 +44,14 @@ export const metadata: Metadata = {
     locale: "en_US",
     alternateLocale: ["pt_BR"],
     siteName: "All In",
+    images: [{ url: "/logo-dark.png", width: 805, height: 411, alt: "All In" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "All In — Digital Agency",
     description:
       "High-performance websites, landing pages, and web applications.",
+    images: ["/logo-dark.png"],
   },
 };
 

@@ -44,8 +44,8 @@ export function Header() {
         }`}
       >
         <div className="mx-auto flex h-[72px] max-w-[1400px] items-center justify-between px-5 md:px-8 lg:px-10">
-          <a href="#top" className="relative z-10" aria-label="allin home">
-            <Logo variant="light" className="h-7 w-[96px]" />
+          <a href="#top" className="relative z-10" aria-label="All In home">
+            <Logo variant="light" priority className="h-8 w-[156px] md:h-9 md:w-[176px]" />
           </a>
 
           <nav

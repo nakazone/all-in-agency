@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { LanguageToggle } from "./LanguageToggle";
+import { Logo } from "./Logo";
 import { useLanguage } from "@/lib/i18n/context";
 import { useReducedMotion } from "@/lib/hooks/useReducedMotion";
 
@@ -22,19 +23,21 @@ export function MenuOverlay({ open, onClose }: MenuOverlayProps) {
           initial={reduced ? { opacity: 0 } : { opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: reduced ? 0.15 : 0.35, ease: [0.23, 1, 0.32, 1] }}
+          transition={{
+            duration: reduced ? 0.15 : 0.35,
+            ease: [0.23, 1, 0.32, 1],
+          }}
         >
           <div className="mx-auto flex w-full max-w-[1400px] flex-1 flex-col justify-center px-6 pt-24 pb-10 md:px-10">
+            <div className="mb-8 lg:hidden">
+              <Logo variant="light" className="h-8 w-[156px]" />
+            </div>
             <nav aria-label="Mobile">
               <ul className="space-y-2 md:space-y-3">
                 {t.menu.links.map((link, i) => (
                   <motion.li
                     key={link.href}
-                    initial={
-                      reduced
-                        ? { opacity: 0 }
-                        : { opacity: 0, x: -24 }
-                    }
+                    initial={reduced ? { opacity: 0 } : { opacity: 0, x: -24 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{
                       delay: reduced ? 0 : 0.05 * i,
