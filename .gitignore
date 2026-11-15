@@ -32,6 +32,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -42,3 +43,9 @@ next-env.d.ts
 
 # Local Netlify folder
 .netlify
+
+# Claude Code: local settings and platform-specific Impeccable engine binary
+.claude/settings.local.json
+.claude/skills/impeccable/scripts/bin/
+.claude/worktrees/
+.agents/skills/impeccable/scripts/bin/
