@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { useLanguage } from "@/lib/i18n/context";
 
 type Errors = {
@@ -9,18 +9,28 @@ type Errors = {
   message?: string;
 };
 
+type SubmitError = "network" | "unavailable" | "invalid" | null;
+
+/** Endereço de captura da plataforma All In. Sem ele, o site não finge que enviou. */
+const CAPTURE_URL = process.env.NEXT_PUBLIC_CAPTURE_URL;
+
 export function Contact() {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [website, setWebsite] = useState("");
   const [errors, setErrors] = useState<Errors>({});
+  const [submitError, setSubmitError] = useState<SubmitError>(null);
+  const [sending, setSending] = useState(false);
   const [success, setSuccess] = useState(false);
+  // Uma chave por mensagem: novas tentativas reutilizam a mesma e a plataforma não duplica.
+  const idempotencyKey = useRef<string | null>(null);
 
   const validate = () => {
     const next: Errors = {};
     if (!name.trim()) next.name = t.contact.form.errors.name;
-    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
       next.email = t.contact.form.errors.email;
     }
     if (!message.trim()) next.message = t.contact.form.errors.message;
@@ -28,14 +38,47 @@ export function Contact() {
     return Object.keys(next).length === 0;
   };
 
-  const onSubmit = (e: FormEvent) => {
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!validate()) return;
-    // TODO: conectar a um endpoint real
-    setSuccess(true);
-    setName("");
-    setEmail("");
-    setMessage("");
+    if (sending || !validate()) return;
+    if (!CAPTURE_URL) {
+      setSubmitError("unavailable");
+      return;
+    }
+    idempotencyKey.current ??= crypto.randomUUID();
+    setSending(true);
+    setSubmitError(null);
+    try {
+      const response = await fetch(CAPTURE_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Idempotency-Key": idempotencyKey.current },
+        body: JSON.stringify({
+          name: name.trim(),
+          email: email.trim(),
+          message: message.trim(),
+          website,
+          locale,
+          page: window.location.href,
+        }),
+      });
+      if (response.status === 200 || response.status === 202) {
+        setSuccess(true);
+        setName("");
+        setEmail("");
+        setMessage("");
+        idempotencyKey.current = null;
+      } else if (response.status === 422) {
+        setSubmitError("invalid");
+      } else if (response.status === 404 || response.status === 410 || response.status === 403) {
+        setSubmitError("unavailable");
+      } else {
+        setSubmitError("network");
+      }
+    } catch {
+      setSubmitError("network");
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -94,7 +137,7 @@ export function Contact() {
               </button>
             </div>
           ) : (
-            <form onSubmit={onSubmit} className="space-y-5" noValidate>
+            <form onSubmit={onSubmit} className="relative space-y-5" noValidate>
               <div>
                 <label
                   htmlFor="contact-name"
@@ -156,11 +199,42 @@ export function Contact() {
                 )}
               </div>
 
+              {/* Campo isca contra spam: invisível para pessoas e para leitores de tela. */}
+              <div aria-hidden="true" className="absolute -left-[9999px] h-px w-px overflow-hidden">
+                <label htmlFor="contact-website">Website</label>
+                <input
+                  id="contact-website"
+                  name="website"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={website}
+                  onChange={(e) => setWebsite(e.target.value)}
+                />
+              </div>
+
+              {submitError && (
+                <p role="alert" className="rounded-xl border border-red/40 bg-red/5 px-4 py-3 text-sm text-red-dark">
+                  {submitError === "unavailable" ? (
+                    <>
+                      {t.contact.form.errors.unavailable}{" "}
+                      <a href={`mailto:${t.contact.email}`} className="font-medium underline underline-offset-2">
+                        {t.contact.email}
+                      </a>
+                      .
+                    </>
+                  ) : (
+                    t.contact.form.errors[submitError]
+                  )}
+                </p>
+              )}
+
               <button
                 type="submit"
-                className="inline-flex items-center rounded-full bg-red px-6 py-3.5 text-sm font-medium text-white transition-colors hover:bg-red-dark"
+                disabled={sending}
+                aria-disabled={sending}
+                className="inline-flex min-h-11 items-center rounded-full bg-red px-6 py-3.5 text-sm font-medium text-white transition-colors hover:bg-red-dark disabled:cursor-progress disabled:opacity-70"
               >
-                {t.contact.form.submit}
+                {sending ? t.contact.form.sending : t.contact.form.submit}
               </button>
             </form>
           )}
