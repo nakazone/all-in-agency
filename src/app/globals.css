@@ -1,4 +1,10 @@
+/* Ordem das camadas: precisa vir antes do import do Tailwind (ver `npx astryx docs styling-libraries/tailwind`). */
+@layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
+
 @import "tailwindcss";
+@import "@astryxdesign/core/reset.css";
+@import "@astryxdesign/core/astryx.css";
+@import "@astryxdesign/theme-neutral/theme.css";
 
 :root {
   --ink: #141311;

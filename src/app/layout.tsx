@@ -4,8 +4,9 @@ import {
   IBM_Plex_Mono,
   IBM_Plex_Sans,
 } from "next/font/google";
-import { Providers } from "@/components/Providers";
+// globals.css primeiro: declara a ordem das camadas de CSS antes do tema Astryx.
 import "./globals.css";
+import { Providers } from "@/components/Providers";
 
 const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
