@@ -4,19 +4,34 @@
 @import "tailwindcss";
 @import "@astryxdesign/core/reset.css";
 @import "@astryxdesign/core/astryx.css";
-@import "@astryxdesign/theme-neutral/theme.css";
+@import "../themes/allin/allin.css"; /* tema All In, gerado em themes/allin/ */
 
+/*
+ * Paleta da referência da marca All In v1.0 (2026-11-17).
+ * Vermelho = marca e ação primária; carvão = texto e fundos escuros;
+ * cinza frio = fundo claro; petróleo = apoio, links, informação e foco.
+ * Valores marcados como "derivado" não estão na referência: são tons
+ * de apoio calculados a partir das cores aprovadas.
+ */
 :root {
-  --ink: #141311;
-  --ink-2: #232019;
-  --paper: #f6f2ec;
-  --paper-2: #ece5da;
-  --red: #c4202b;
-  --red-dark: #87141d;
-  --red-soft: #f3d8d9;
-  --line: rgba(20, 19, 17, 0.15);
+  --ink: #242020; /* carvão */
+  --ink-2: #302a2a; /* derivado: superfície sobre carvão */
+  --paper: #f3f5f7; /* cinza frio */
+  --paper-2: #ffffff; /* superfície */
+  --red: #ba2027; /* vermelho */
+  --red-dark: #93191f; /* derivado: hover do vermelho */
+  --red-soft: #f6dadb; /* derivado */
+  /* Vermelho do logo negativo. Sobre carvão, #BA2027 fica em 2,55:1; este dá
+     4,06:1. Usar só em texto grande e destaques sobre fundo escuro, nunca em
+     botões nem em texto pequeno. */
+  --red-on-dark: #f0353d;
+  --petroleo: #24606b;
+  --petroleo-soft: #d3e5e8;
+  --line: #d9dde2; /* borda proposta: divisórias e contornos decorativos */
+  --line-control: #7e8891; /* derivado: borda de campos, 3,3:1 sobre o cinza frio */
   --line-on-dark: rgba(255, 255, 255, 0.18);
-  --gray: #6b675f;
+  --gray: #515d66; /* texto */
+  --gray-muted: #626e77; /* texto secundário */
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
@@ -32,8 +47,13 @@
   --color-line: var(--line);
   --color-line-on-dark: var(--line-on-dark);
   --color-gray: var(--gray);
+  --color-gray-muted: var(--gray-muted);
+  --color-red-on-dark: var(--red-on-dark);
+  --color-line-control: var(--line-control);
+  --color-petroleo: var(--petroleo);
+  --color-petroleo-soft: var(--petroleo-soft);
   --font-display: var(--font-bricolage);
-  --font-sans: var(--font-plex-sans);
+  --font-sans: var(--font-geist);
   --font-mono: var(--font-plex-mono);
 }
 
@@ -44,7 +64,7 @@ html {
 body {
   background: var(--ink);
   color: var(--paper);
-  font-family: var(--font-plex-sans), system-ui, sans-serif;
+  font-family: var(--font-geist), Arial, sans-serif;
   overflow-x: hidden;
 }
 
@@ -53,9 +73,12 @@ body {
   color: white;
 }
 
+/* Foco em petróleo (referência da marca), com um anel claro por fora para
+   continuar visível também sobre carvão e vermelho. */
 :focus-visible {
-  outline: 2px solid var(--red);
-  outline-offset: 3px;
+  outline: 2px solid var(--petroleo);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px var(--paper);
 }
 
 @media (hover: hover) and (pointer: fine) {

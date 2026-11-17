@@ -20,7 +20,7 @@ export function Testimonials() {
       aria-labelledby="testimonials-title"
     >
       <div className="mx-auto max-w-[900px] px-5 text-center md:px-8">
-        <p className="font-mono text-xs tracking-[0.18em] text-red">
+        <p className="font-mono text-xs tracking-[0.18em] text-petroleo">
           {t.testimonials.eyebrow}
         </p>
         <h2
@@ -35,7 +35,7 @@ export function Testimonials() {
             type="button"
             onClick={prev}
             aria-label={t.testimonials.prev}
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-line transition-colors hover:border-red hover:text-red"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-line transition-colors hover:border-petroleo hover:text-petroleo"
           >
             ←
           </button>
@@ -66,7 +66,7 @@ export function Testimonials() {
             type="button"
             onClick={next}
             aria-label={t.testimonials.next}
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-line transition-colors hover:border-red hover:text-red"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-line transition-colors hover:border-petroleo hover:text-petroleo"
           >
             →
           </button>
@@ -80,7 +80,7 @@ export function Testimonials() {
               aria-label={`Go to slide ${i + 1}`}
               onClick={() => setIndex(i)}
               className={`h-2 w-2 rounded-full transition-colors ${
-                i === index ? "bg-red" : "bg-line"
+                i === index ? "bg-petroleo" : "bg-line"
               }`}
             />
           ))}

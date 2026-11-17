@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { MagneticButton } from "./MagneticButton";
 import { useLanguage } from "@/lib/i18n/context";
 
@@ -19,12 +20,25 @@ export function CTABand() {
           </h2>
           <p className="mt-3 text-white/80">{t.cta.subtitle}</p>
         </div>
-        <MagneticButton
-          href="#contact"
-          className="inline-flex shrink-0 items-center rounded-full bg-white px-7 py-4 text-sm font-medium text-ink transition-transform hover:scale-[1.02]"
-        >
-          {t.cta.button}
-        </MagneticButton>
+        <div className="flex shrink-0 items-center gap-5">
+          {/* Otto preto (inversão) sobre o vermelho: o vermelho some no fundo vermelho.
+              Decorativo e só a partir do tablet, para não disputar espaço no celular. */}
+          <Image
+            src="/otto/otto-22-preto-acolhe.png"
+            alt=""
+            aria-hidden
+            width={720}
+            height={720}
+            sizes="128px"
+            className="hidden h-auto w-28 drop-shadow-[0_14px_20px_rgba(0,0,0,.25)] md:block lg:w-32"
+          />
+          <MagneticButton
+            href="#contact"
+            className="inline-flex shrink-0 items-center rounded-full bg-white px-7 py-4 text-sm font-medium text-ink transition-transform hover:scale-[1.02]"
+          >
+            {t.cta.button}
+          </MagneticButton>
+        </div>
       </div>
     </section>
   );

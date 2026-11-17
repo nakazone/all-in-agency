@@ -7,6 +7,7 @@ import {
   useMotionValue,
   useSpring,
 } from "framer-motion";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { MagneticButton } from "./MagneticButton";
 import { useLanguage } from "@/lib/i18n/context";
@@ -25,7 +26,7 @@ function RotatingWord({ words }: { words: readonly string[] }) {
   }, [reduced, words.length]);
 
   return (
-    <span className="relative inline-block min-h-[1.1em] text-red">
+    <span className="relative inline-block min-h-[1.1em] text-red-on-dark">
       <AnimatePresence mode="wait">
         <motion.span
           key={words[index]}
@@ -130,7 +131,7 @@ function HeroCards() {
 
       {/* Card 2 — red center */}
       <motion.div
-        className="absolute top-[2%] left-[22%] z-[3] flex h-[82%] w-[54%] flex-col justify-between overflow-hidden rounded-2xl bg-red p-5 text-white shadow-[0_40px_80px_rgba(196,32,43,.45)] md:p-6"
+        className="absolute top-[2%] left-[22%] z-[3] flex h-[82%] w-[54%] flex-col justify-between overflow-hidden rounded-2xl bg-red p-5 text-white shadow-[0_40px_80px_rgba(186,32,39,.45)] md:p-6"
         style={{ transformStyle: "preserve-3d" }}
         animate={
           reduced
@@ -163,6 +164,25 @@ function HeroCards() {
         >
           {t.hero.cardCenter.cta}
         </a>
+      </motion.div>
+
+      {/* Otto (boas-vindas) apoiado no topo do card central. Decorativo: não
+          cobre o texto nem o CTA do card. */}
+      <motion.div
+        aria-hidden
+        className="pointer-events-none absolute top-[-15%] left-[47%] z-[4] w-[30%] max-w-[170px]"
+        animate={reduced ? {} : { y: hovered === 1 ? -8 : 0 }}
+        transition={{ type: "spring", stiffness: 200, damping: 20 }}
+      >
+        <Image
+          src="/otto/otto-02-boas-vindas.png"
+          alt=""
+          width={720}
+          height={720}
+          priority
+          sizes="170px"
+          className="h-auto w-full drop-shadow-[0_18px_24px_rgba(0,0,0,.35)]"
+        />
       </motion.div>
 
       {/* Card 3 — dashboard (right) */}
@@ -207,7 +227,7 @@ function HeroCards() {
             <path
               d="M0 36 C20 34, 30 20, 50 22 S80 40, 100 18 S130 8, 160 14"
               fill="none"
-              stroke="#C4202B"
+              className="stroke-red"
               strokeWidth="2.5"
             />
           </svg>

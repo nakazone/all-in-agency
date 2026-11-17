@@ -85,7 +85,7 @@ export function Contact() {
     <section id="contact" className="bg-paper py-20 text-ink md:py-28">
       <div className="mx-auto grid max-w-[1400px] gap-12 px-5 md:grid-cols-2 md:gap-16 md:px-8 lg:px-10">
         <div>
-          <p className="font-mono text-xs tracking-[0.18em] text-red">
+          <p className="font-mono text-xs tracking-[0.18em] text-petroleo">
             {t.contact.eyebrow}
           </p>
           <h2 className="mt-4 font-display text-[clamp(2.4rem,5vw,4rem)] leading-[1.05] font-semibold tracking-tight">
@@ -105,13 +105,13 @@ export function Contact() {
             <div className="space-y-2 border-t border-line pt-8">
               <a
                 href={`mailto:${t.contact.email}`}
-                className="block text-sm transition-colors hover:text-red"
+                className="block text-sm underline-offset-4 transition-colors hover:text-petroleo hover:underline"
               >
                 {t.contact.email}
               </a>
               <a
                 href={`tel:${t.contact.phone.replace(/\s/g, "")}`}
-                className="block text-sm transition-colors hover:text-red"
+                className="block text-sm underline-offset-4 transition-colors hover:text-petroleo hover:underline"
               >
                 {t.contact.phone}
               </a>
@@ -130,7 +130,7 @@ export function Contact() {
               </p>
               <button
                 type="button"
-                className="mt-6 text-sm text-red"
+                className="mt-6 text-sm text-petroleo"
                 onClick={() => setSuccess(false)}
               >
                 ←
@@ -150,11 +150,11 @@ export function Contact() {
                   name="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full rounded-xl border border-line bg-transparent px-4 py-3 text-sm outline-none transition-colors focus:border-red"
+                  className="w-full rounded-xl border border-line-control bg-paper-2 px-4 py-3 text-sm outline-none transition-colors focus:border-petroleo"
                   autoComplete="name"
                 />
                 {errors.name && (
-                  <p className="mt-1.5 text-xs text-red">{errors.name}</p>
+                  <p className="mt-1.5 text-xs text-red-dark">{errors.name}</p>
                 )}
               </div>
 
@@ -171,11 +171,11 @@ export function Contact() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full rounded-xl border border-line bg-transparent px-4 py-3 text-sm outline-none transition-colors focus:border-red"
+                  className="w-full rounded-xl border border-line-control bg-paper-2 px-4 py-3 text-sm outline-none transition-colors focus:border-petroleo"
                   autoComplete="email"
                 />
                 {errors.email && (
-                  <p className="mt-1.5 text-xs text-red">{errors.email}</p>
+                  <p className="mt-1.5 text-xs text-red-dark">{errors.email}</p>
                 )}
               </div>
 
@@ -192,10 +192,10 @@ export function Contact() {
                   rows={5}
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  className="w-full resize-y rounded-xl border border-line bg-transparent px-4 py-3 text-sm outline-none transition-colors focus:border-red"
+                  className="w-full resize-y rounded-xl border border-line-control bg-paper-2 px-4 py-3 text-sm outline-none transition-colors focus:border-petroleo"
                 />
                 {errors.message && (
-                  <p className="mt-1.5 text-xs text-red">{errors.message}</p>
+                  <p className="mt-1.5 text-xs text-red-dark">{errors.message}</p>
                 )}
               </div>
 

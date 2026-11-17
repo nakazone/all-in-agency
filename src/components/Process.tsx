@@ -76,7 +76,7 @@ export function Process() {
     <section id="process" className="bg-paper py-20 text-ink md:py-28">
       <div className="mx-auto max-w-[1400px] px-5 md:px-8 lg:px-10">
         <div className="mb-14 max-w-xl">
-          <p className="font-mono text-xs tracking-[0.18em] text-red">
+          <p className="font-mono text-xs tracking-[0.18em] text-petroleo">
             {t.process.eyebrow}
           </p>
           <h2 className="mt-4 font-display text-[clamp(2.4rem,5vw,4.5rem)] leading-[1.05] font-semibold tracking-tight">
@@ -91,7 +91,7 @@ export function Process() {
           />
           {t.process.steps.map((step) => (
             <li key={step.title} className="relative">
-              <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-red text-white">
+              <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-petroleo text-white">
                 <StepIcon icon={step.icon} />
               </div>
               <h3 className="font-display text-lg font-semibold tracking-tight">
