@@ -1,108 +1,93 @@
 "use client";
 
+import Image from "next/image";
+import { useId, useState } from "react";
 import { useLanguage } from "@/lib/i18n/context";
 
-function StepIcon({ icon }: { icon: string }) {
-  const common = "h-5 w-5";
-  switch (icon) {
-    case "eye":
-      return (
-        <svg viewBox="0 0 24 24" className={common} fill="none" aria-hidden>
-          <path
-            d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"
-            stroke="currentColor"
-            strokeWidth="1.6"
-          />
-          <circle cx="12" cy="12" r="2.5" stroke="currentColor" strokeWidth="1.6" />
-        </svg>
-      );
-    case "grid":
-      return (
-        <svg viewBox="0 0 24 24" className={common} fill="none" aria-hidden>
-          <rect x="4" y="4" width="6" height="6" stroke="currentColor" strokeWidth="1.6" />
-          <rect x="14" y="4" width="6" height="6" stroke="currentColor" strokeWidth="1.6" />
-          <rect x="4" y="14" width="6" height="6" stroke="currentColor" strokeWidth="1.6" />
-          <rect x="14" y="14" width="6" height="6" stroke="currentColor" strokeWidth="1.6" />
-        </svg>
-      );
-    case "pen":
-      return (
-        <svg viewBox="0 0 24 24" className={common} fill="none" aria-hidden>
-          <path
-            d="M4 20l4.5-1.2L19 8.3a2 2 0 0 0 0-2.8L18.5 5a2 2 0 0 0-2.8 0L5.2 15.5 4 20Z"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            strokeLinejoin="round"
-          />
-        </svg>
-      );
-    case "code":
-      return (
-        <svg viewBox="0 0 24 24" className={common} fill="none" aria-hidden>
-          <path
-            d="M9 7L4 12l5 5M15 7l5 5-5 5"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      );
-    default:
-      return (
-        <svg viewBox="0 0 24 24" className={common} fill="none" aria-hidden>
-          <path
-            d="M5 15l3-3 3 2 4-5 4 3"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M14 5l2 1 3-3"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            strokeLinecap="round"
-          />
-        </svg>
-      );
-  }
-}
+// Do petróleo mais escuro ao mais claro: a ordem das etapas é dita pela cor.
+// Os dois primeiros e o último tom são derivados do petróleo (#24606B) e do petróleo suave (#D3E5E8).
+const tints = [
+  { bg: "bg-[#163a41]", ink: "text-white" },
+  { bg: "bg-petroleo", ink: "text-white" },
+  { bg: "bg-[#2f6f7b]", ink: "text-white" },
+  { bg: "bg-[#a9cdd4]", ink: "text-ink" },
+  { bg: "bg-petroleo-soft", ink: "text-ink" },
+];
 
+/**
+ * Acordeão de etapas. No computador, uma linha de painéis em que a etapa aberta ocupa
+ * mais da metade; no celular, barras empilhadas. Cada etapa diz o que o cliente acompanha.
+ */
 export function Process() {
   const { t } = useLanguage();
+  const p = t.process;
+  const [open, setOpen] = useState(0);
+  const baseId = useId();
 
   return (
-    <section id="process" className="bg-paper py-20 text-ink md:py-28">
-      <div className="mx-auto max-w-[1400px] px-5 md:px-8 lg:px-10">
-        <div className="mb-14 max-w-xl">
-          <p className="font-mono text-xs tracking-[0.18em] text-petroleo">
-            {t.process.eyebrow}
-          </p>
-          <h2 className="mt-4 font-display text-[clamp(2.4rem,5vw,4.5rem)] leading-[1.05] font-semibold tracking-tight">
-            {t.process.title}
+    <section id="process" aria-labelledby="process-title" className="bg-paper py-28 text-ink md:py-40">
+      <div className="mx-auto max-w-[1440px] px-5 md:px-8">
+        <div className="grid gap-6 md:grid-cols-12 md:items-end">
+          <h2 id="process-title" data-reveal className="font-display text-[clamp(40px,5vw,76px)] leading-[0.95] font-extrabold tracking-[-0.04em] md:col-span-5">
+            {p.title}
           </h2>
+          <p data-reveal style={{ "--i": 1 } as React.CSSProperties} className="max-w-[46ch] text-lg leading-[1.55] md:col-span-5 md:col-start-7">
+            {p.lead}
+          </p>
         </div>
 
-        <ol className="relative grid gap-10 md:grid-cols-5 md:gap-4">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute top-6 right-0 left-0 hidden h-px bg-line md:block"
-          />
-          {t.process.steps.map((step) => (
-            <li key={step.title} className="relative">
-              <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-petroleo text-white">
-                <StepIcon icon={step.icon} />
+        <div data-reveal style={{ "--i": 2 } as React.CSSProperties} className="mt-16 flex flex-col overflow-hidden rounded-[24px] md:h-[540px] md:flex-row">
+          {p.steps.map((step, i) => {
+            const isOpen = open === i;
+            const tint = tints[i];
+            const panelId = `${baseId}-panel-${i}`;
+            return (
+              <div
+                key={step.name}
+                className={`relative flex flex-col ${tint.bg} ${tint.ink} transition-[flex-grow,flex-basis] duration-[450ms] ease-[cubic-bezier(0.23,1,0.32,1)] md:min-w-[84px] ${
+                  isOpen ? "md:grow-[7] md:basis-0" : "md:grow md:basis-0"
+                }`}
+              >
+                <h3 className="contents">
+                  <button
+                    type="button"
+                    aria-expanded={isOpen}
+                    aria-controls={panelId}
+                    onClick={() => setOpen(i)}
+                    className={`flex min-h-16 w-full items-center justify-between gap-3 px-6 text-left font-display text-2xl font-extrabold tracking-[-0.01em] md:h-full md:items-end md:justify-start md:pb-8 ${
+                      isOpen ? "md:hidden" : "md:[writing-mode:vertical-rl] md:rotate-180"
+                    }`}
+                  >
+                    {step.name}
+                    <span aria-hidden="true" className="text-2xl md:hidden">
+                      {isOpen ? "−" : "+"}
+                    </span>
+                  </button>
+                </h3>
+                <div
+                  id={panelId}
+                  role="region"
+                  aria-label={step.name}
+                  hidden={!isOpen}
+                  className="grid flex-1 gap-6 px-6 pb-8 md:grid-cols-[1fr_0.8fr] md:p-10"
+                >
+                  <div className="flex flex-col justify-between gap-6">
+                    <p className="hidden font-display text-[40px] leading-[1] font-extrabold tracking-[-0.03em] md:block">{step.name}</p>
+                    <div className="max-w-[40ch]">
+                      <p className="text-lg leading-[1.55]">{step.body}</p>
+                      <p className="mt-4 text-lg leading-[1.55]">
+                        <span className="font-semibold">{p.youSee}</span> {step.see}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="relative mx-auto aspect-square w-[60%] md:w-full md:self-center">
+                    <Image src={`/otto/otto-${step.pose}.png`} alt="" fill sizes="(min-width: 768px) 25vw, 55vw" className="object-contain" />
+                  </div>
+                </div>
               </div>
-              <h3 className="font-display text-lg font-semibold tracking-tight">
-                {step.title}
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-gray">
-                {step.desc}
-              </p>
-            </li>
-          ))}
-        </ol>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

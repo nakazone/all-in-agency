@@ -1,142 +1,131 @@
 "use client";
 
+import Image from "next/image";
+import { MagneticButton } from "./MagneticButton";
 import { Logo } from "./Logo";
+import { LanguageToggle } from "./LanguageToggle";
 import { useLanguage } from "@/lib/i18n/context";
 
+const linkClass =
+  "group relative inline-flex min-h-11 w-fit items-center text-lg text-paper/80 transition-colors duration-200 hover:text-paper";
+// Sublinhado que cresce da esquerda ao passar o mouse ou focar.
+const underline =
+  "after:absolute after:bottom-2 after:left-0 after:h-0.5 after:w-full after:origin-left after:scale-x-0 after:rounded-full after:bg-red-on-dark after:transition-transform after:duration-300 group-hover:after:scale-x-100 group-focus-visible:after:scale-x-100";
+
+/**
+ * Fechamento: uma chamada final com o Otto acenando, colunas de navegação, serviços e
+ * contato, e a barra com os direitos e o "voltar ao topo". A marca d'água do ambigrama
+ * vem do layout anterior.
+ */
 export function Footer() {
   const { t } = useLanguage();
+  const f = t.footer;
+  const nav = [
+    { label: t.nav.services, href: "#services" },
+    { label: t.nav.work, href: "#work" },
+    { label: t.nav.process, href: "#process" },
+    { label: t.nav.about, href: "#about" },
+    { label: t.nav.contact, href: "#contact" },
+  ];
 
   return (
-    <footer className="relative overflow-hidden bg-ink pt-20 pb-8 text-paper">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-[-4%] flex justify-center overflow-hidden opacity-[0.06]"
-      >
-        <Logo variant="mono-light" className="h-auto w-[min(90vw,920px)]" />
+    <footer className="relative overflow-hidden bg-ink text-paper">
+      {/* Marca d'água do ambigrama, decorativa. */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 -bottom-[6%] flex justify-center opacity-[0.06]">
+        <Image src="/brand/logo-branco.svg" alt="" width={354} height={198} unoptimized className="h-auto w-[min(92vw,1100px)]" />
       </div>
 
-      <div className="relative mx-auto max-w-[1400px] px-5 md:px-8 lg:px-10">
-        <div className="grid gap-12 lg:grid-cols-[1.1fr_2fr]">
+      <div className="relative mx-auto max-w-[1440px] px-5 md:px-8">
+        {/* Chamada final */}
+        <div className="flex flex-col gap-8 pt-24 pb-16 md:flex-row md:items-end md:justify-between md:pt-32">
           <div>
-            <a href="#top" aria-label="All In home">
-              <Logo variant="light" className="h-9 w-[176px]" />
-            </a>
-            <p className="mt-5 max-w-sm text-sm leading-relaxed text-paper/60">
-              {t.footer.tagline}
+            <p data-reveal className="font-display text-[clamp(40px,5vw,76px)] leading-[0.95] font-extrabold tracking-[-0.04em]">
+              {f.cta}
             </p>
-            <div className="mt-6 flex gap-3">
-              {[
-                { label: "Instagram", href: "https://instagram.com" },
-                { label: "LinkedIn", href: "https://linkedin.com" },
-                { label: "Facebook", href: "https://facebook.com" },
-              ].map((s) => (
-                <a
-                  key={s.label}
-                  href={s.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={s.label}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-line-on-dark text-[11px] text-paper/60 transition-colors hover:border-red-on-dark hover:text-paper"
-                >
-                  {s.label.slice(0, 2)}
-                </a>
-              ))}
+            <div data-reveal style={{ "--i": 1 } as React.CSSProperties} className="mt-8">
+              {/* O formulário fica logo acima; aqui, o canal direto por e-mail. */}
+              <MagneticButton
+                href={`mailto:${t.contact.email}`}
+                className="inline-flex min-h-14 items-center gap-3 rounded-full bg-red px-8 text-lg font-semibold text-white transition-colors duration-200 hover:bg-red-dark"
+              >
+                {t.contact.email}
+                <span aria-hidden="true">→</span>
+              </MagneticButton>
             </div>
           </div>
-
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
-            <div>
-              <p className="mb-4 font-mono text-[10px] tracking-[0.18em] text-paper/45 uppercase">
-                {t.footer.navigation}
-              </p>
-              <ul className="space-y-2.5">
-                {t.footer.navLinks.map((link) => (
-                  <li key={link.label}>
-                    <a
-                      href={link.href}
-                      className="text-sm text-paper/70 transition-colors hover:text-paper"
-                    >
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <p className="mb-4 font-mono text-[10px] tracking-[0.18em] text-paper/45 uppercase">
-                {t.footer.services}
-              </p>
-              <ul className="space-y-2.5">
-                {t.footer.serviceLinks.map((label) => (
-                  <li key={label}>
-                    <a
-                      href="#services"
-                      className="text-sm text-paper/70 transition-colors hover:text-paper"
-                    >
-                      {label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <p className="mb-4 font-mono text-[10px] tracking-[0.18em] text-paper/45 uppercase">
-                {t.footer.company}
-              </p>
-              <ul className="space-y-2.5">
-                {t.footer.companyLinks.map((link) => (
-                  <li key={link.label}>
-                    <a
-                      href={link.href}
-                      className="text-sm text-paper/70 transition-colors hover:text-paper"
-                    >
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <p className="mb-4 font-mono text-[10px] tracking-[0.18em] text-paper/45 uppercase">
-                {t.footer.letsTalk}
-              </p>
-              <ul className="space-y-2.5 text-sm text-paper/70">
-                <li>
-                  <a
-                    href="mailto:contato@agenciaallin.com.br"
-                    className="transition-colors hover:text-paper"
-                  >
-                    contato@agenciaallin.com.br
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="tel:+5511989338312"
-                    className="transition-colors hover:text-paper"
-                  >
-                    +55 11 98933-8312
-                  </a>
-                </li>
-                <li className="pt-2">São Paulo · Brasil</li>
-                <li>Miami · EUA</li>
-              </ul>
-            </div>
+          <div data-reveal style={{ "--i": 2 } as React.CSSProperties} className="relative aspect-square w-40 self-end md:w-56">
+            <Image src="/otto/otto-03-aceno.png" alt="" fill sizes="224px" className="otto-float object-contain" />
           </div>
         </div>
 
-        <div className="mt-16 flex flex-col gap-4 border-t border-line-on-dark pt-6 text-xs text-paper/45 sm:flex-row sm:items-center sm:justify-between">
-          <p>{t.footer.copyright}</p>
-          <div className="flex gap-5">
-            <a href="#contact" className="transition-colors hover:text-paper">
-              {t.footer.privacy}
+        {/* Colunas */}
+        <div className="grid gap-12 rounded-[24px] bg-white/5 p-8 sm:grid-cols-2 md:p-10 lg:grid-cols-12 lg:gap-6">
+          <div className="flex flex-col gap-5 lg:col-span-4">
+            <a href="#top" aria-label={t.nav.home} className="inline-flex min-h-11 w-fit items-center">
+              <Logo variant="light" className="h-12 w-auto" />
             </a>
-            <a href="#contact" className="transition-colors hover:text-paper">
-              {t.footer.terms}
-            </a>
+            <p className="max-w-[30ch] text-lg leading-[1.5] text-paper/80">{f.line}</p>
+            <LanguageToggle className="w-fit" />
           </div>
+
+          <nav aria-label={f.navTitle} className="lg:col-span-2 lg:col-start-6">
+            <h2 className="text-[15px] font-semibold text-paper/60">{f.navTitle}</h2>
+            <ul className="mt-3 flex flex-col">
+              {nav.map((l) => (
+                <li key={l.href}>
+                  <a href={l.href} className={`${linkClass} ${underline}`}>
+                    {l.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <div className="lg:col-span-2">
+            <h2 className="text-[15px] font-semibold text-paper/60">{f.servicesTitle}</h2>
+            <ul className="mt-3 flex flex-col">
+              {t.hand.cards.map((c) => (
+                <li key={c.id}>
+                  <a href="#services" className={`${linkClass} ${underline}`}>
+                    {c.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="lg:col-span-3 lg:col-start-10">
+            <h2 className="text-[15px] font-semibold text-paper/60">{f.contactTitle}</h2>
+            <ul className="mt-3 flex flex-col">
+              <li>
+                <a href={`mailto:${t.contact.email}`} className={`${linkClass} ${underline} break-all`}>
+                  {t.contact.email}
+                </a>
+              </li>
+              <li>
+                <a href={`tel:${t.contact.phone.replace(/\s/g, "")}`} className={`${linkClass} ${underline}`}>
+                  {t.contact.phone}
+                </a>
+              </li>
+              <li className="pt-2 text-[15px] text-paper/70">{t.contact.places}</li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Barra final */}
+        <div className="flex flex-col gap-4 py-10 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-[15px] text-paper/70">
+            © {new Date().getFullYear()} All In. {f.rights}
+          </p>
+          <a
+            href="#top"
+            className="group inline-flex min-h-11 w-fit items-center gap-3 rounded-full bg-white/10 px-5 text-[15px] font-semibold transition-colors duration-200 hover:bg-white/20"
+          >
+            {f.top}
+            <span aria-hidden="true" className="transition-transform duration-300 group-hover:-translate-y-1">
+              ↑
+            </span>
+          </a>
         </div>
       </div>
     </footer>

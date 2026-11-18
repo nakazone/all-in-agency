@@ -1,8 +1,7 @@
 "use client";
 
+import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { LanguageToggle } from "./LanguageToggle";
-import { Logo } from "./Logo";
 import { useLanguage } from "@/lib/i18n/context";
 import { useReducedMotion } from "@/lib/hooks/useReducedMotion";
 
@@ -11,85 +10,64 @@ type MenuOverlayProps = {
   onClose: () => void;
 };
 
+/** Menu do celular: as seções em tipo grande, a ação principal e o contato direto. */
 export function MenuOverlay({ open, onClose }: MenuOverlayProps) {
   const { t } = useLanguage();
   const reduced = useReducedMotion();
+  const links = [
+    { label: t.nav.services, href: "#services" },
+    { label: t.nav.work, href: "#work" },
+    { label: t.nav.process, href: "#process" },
+    { label: t.nav.about, href: "#about" },
+    { label: t.nav.contact, href: "#contact" },
+  ];
 
   return (
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-40 flex flex-col bg-ink"
-          initial={reduced ? { opacity: 0 } : { opacity: 0 }}
+          id="mobile-menu"
+          className="fixed inset-x-0 top-[72px] bottom-0 z-40 overflow-y-auto bg-ink text-paper lg:hidden"
+          initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{
-            duration: reduced ? 0.15 : 0.35,
-            ease: [0.23, 1, 0.32, 1],
-          }}
+          transition={{ duration: reduced ? 0.12 : 0.25, ease: [0.23, 1, 0.32, 1] }}
         >
-          <div className="mx-auto flex w-full max-w-[1400px] flex-1 flex-col justify-center px-6 pt-24 pb-10 md:px-10">
-            <div className="mb-8 lg:hidden">
-              <Logo variant="light" className="h-8 w-[156px]" />
-            </div>
-            <nav aria-label="Mobile">
-              <ul className="space-y-2 md:space-y-3">
-                {t.menu.links.map((link, i) => (
+          <div className="flex min-h-full flex-col px-5 pt-6 pb-8 md:px-8">
+            <nav aria-label={t.nav.primary}>
+              <ul>
+                {links.map((link, i) => (
                   <motion.li
                     key={link.href}
-                    initial={reduced ? { opacity: 0 } : { opacity: 0, x: -24 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{
-                      delay: reduced ? 0 : 0.05 * i,
-                      duration: 0.45,
-                      ease: [0.23, 1, 0.32, 1],
-                    }}
+                    initial={reduced ? { opacity: 0 } : { opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: reduced ? 0 : 0.04 * i, duration: 0.35, ease: [0.23, 1, 0.32, 1] }}
                   >
                     <a
                       href={link.href}
                       onClick={onClose}
-                      className="group flex items-baseline gap-4 py-2 font-display text-[clamp(2rem,8vw,5.5rem)] font-semibold tracking-tight text-paper transition-colors hover:text-red-on-dark md:gap-6"
+                      className="block py-2 font-display text-[clamp(2.5rem,11vw,4.5rem)] leading-tight font-bold tracking-[-0.03em] transition-colors hover:text-red-on-dark"
                     >
-                      <span className="font-mono text-sm text-paper/60 md:text-base">
-                        {link.num}
-                      </span>
-                      <span className="inline-block transition-transform duration-300 group-hover:translate-x-3">
-                        {link.label}
-                      </span>
+                      {link.label}
                     </a>
                   </motion.li>
                 ))}
               </ul>
             </nav>
-
-            <div className="mt-auto flex flex-col gap-6 border-t border-line-on-dark pt-8 sm:flex-row sm:items-center sm:justify-between">
-              <a
-                href={`mailto:${t.menu.email}`}
-                className="font-sans text-sm text-paper/70 transition-colors hover:text-paper"
-              >
-                {t.menu.email}
-              </a>
-              <div className="flex items-center gap-5">
-                <LanguageToggle />
-                <div className="flex items-center gap-3">
-                  {[
-                    { label: "Instagram", href: "https://instagram.com" },
-                    { label: "LinkedIn", href: "https://linkedin.com" },
-                    { label: "Facebook", href: "https://facebook.com" },
-                  ].map((s) => (
-                    <a
-                      key={s.label}
-                      href={s.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={s.label}
-                      className="flex h-9 w-9 items-center justify-center rounded-full border border-line-on-dark text-xs text-paper/70 transition-colors hover:border-red-on-dark hover:text-paper"
-                    >
-                      {s.label[0]}
-                    </a>
-                  ))}
-                </div>
+            <div className="mt-auto flex items-end justify-between gap-4 pt-10">
+              <div className="flex flex-col gap-4">
+                <a
+                  href="#contact"
+                  onClick={onClose}
+                  className="inline-flex min-h-12 w-fit items-center rounded-full bg-red px-6 text-base font-semibold text-white"
+                >
+                  {t.nav.cta}
+                </a>
+                <a href={`mailto:${t.contact.email}`} className="inline-flex min-h-11 items-center text-base text-paper/85 underline-offset-4 hover:underline">
+                  {t.contact.email}
+                </a>
               </div>
+              <Image src="/otto/sm/otto-03-aceno.png" alt="" width={320} height={320} className="h-auto w-28" />
             </div>
           </div>
         </motion.div>

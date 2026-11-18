@@ -1,7 +1,16 @@
 "use client";
 
-import { useRef, useState, type FormEvent } from "react";
+import Image from "next/image";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useLanguage } from "@/lib/i18n/context";
+import { useHand } from "@/lib/hand";
+
+// Poses do Otto na faixa do contato (repetida duas vezes para o laço contínuo).
+const strip = [
+  "otto-02-boas-vindas", "otto-21-preto-assinatura", "otto-09-pensativo", "otto-12-comemorando",
+  "otto-22-preto-acolhe", "otto-11-explicando", "otto-15-focado-criando", "otto-23-preto-curioso",
+  "otto-04-aponta-direita", "otto-16-ouvindo", "otto-10-curioso", "otto-18-flutuando",
+];
 
 type Errors = {
   name?: string;
@@ -16,6 +25,7 @@ const CAPTURE_URL = process.env.NEXT_PUBLIC_CAPTURE_URL;
 
 export function Contact() {
   const { t, locale } = useLanguage();
+  const { hand } = useHand();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
@@ -26,6 +36,23 @@ export function Contact() {
   const [success, setSuccess] = useState(false);
   // Uma chave por mensagem: novas tentativas reutilizam a mesma e a plataforma não duplica.
   const idempotencyKey = useRef<string | null>(null);
+  // Texto que a mão escolhida pôs na mensagem; só é trocado enquanto a pessoa não editou.
+  const handLine = useRef("");
+
+  useEffect(() => {
+    const names = t.hand.cards.filter((c) => hand.includes(c.id)).map((c) => c.name);
+    const line = names.length ? `${t.contact.handPrefix} ${names.join(" + ")}\n\n` : "";
+    // Guarda a linha anterior antes de atualizar: a função abaixo roda depois, na renderização.
+    const previous = handLine.current;
+    handLine.current = line;
+    setMessage((prev) => {
+      if (prev === "" || prev === previous) return line;
+      if (previous && prev.startsWith(previous)) return line + prev.slice(previous.length);
+      // Mão vazia até agora e texto já escrito: a linha da mão entra antes do texto.
+      if (!previous) return line + prev;
+      return prev;
+    });
+  }, [hand, t]);
 
   const validate = () => {
     const next: Errors = {};
@@ -81,126 +108,126 @@ export function Contact() {
     }
   };
 
+  // taste-skill-ignore: o anel aparece só no foco do teclado, não em repouso.
+  const field =
+    "w-full rounded-[16px] bg-white px-5 py-4 text-lg text-ink placeholder:text-gray outline-none transition-[box-shadow] duration-200 ";
+  const focusRing = "focus-visible:shadow-[0_0_0_3px_var(--ink)]"; // taste-skill-ignore: só no foco
+  const fieldError = (msg?: string, id?: string) =>
+    msg ? (
+      <p id={id} className="mt-2 text-[15px] font-semibold text-white">
+        <span aria-hidden="true">▲ </span>
+        {msg}
+      </p>
+    ) : null;
+
   return (
-    <section id="contact" className="bg-paper py-20 text-ink md:py-28">
-      <div className="mx-auto grid max-w-[1400px] gap-12 px-5 md:grid-cols-2 md:gap-16 md:px-8 lg:px-10">
-        <div>
-          <p className="font-mono text-xs tracking-[0.18em] text-petroleo">
-            {t.contact.eyebrow}
-          </p>
-          <h2 className="mt-4 font-display text-[clamp(2.4rem,5vw,4rem)] leading-[1.05] font-semibold tracking-tight">
+    <section id="contact" aria-labelledby="contact-title" className="overflow-hidden bg-red pt-12 pb-24 text-white md:pb-28">
+      {/* Faixa de poses do Otto: decorativa, passa devagar e pausa com o mouse ou o foco. */}
+      <div className="marquee" aria-hidden="true">
+        <div className="marquee-track flex w-max gap-3">
+          {[...strip, ...strip].map((pose, i) => (
+            <div key={i} className="relative h-[110px] w-[110px] shrink-0 rounded-[24px] bg-white/10 md:h-[150px] md:w-[150px]">
+              <Image src={`/otto/sm/${pose}.png`} alt="" fill sizes="150px" className="object-contain p-2" />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="mx-auto mt-16 grid max-w-[1440px] gap-12 px-5 md:mt-20 md:grid-cols-12 md:gap-6 md:px-8">
+        <div className="md:col-span-5">
+          <h2 id="contact-title" data-reveal className="font-display text-[clamp(40px,5vw,76px)] leading-[0.95] font-extrabold tracking-[-0.04em]">
             {t.contact.title}
           </h2>
-
-          <div className="mt-10 space-y-8">
-            {t.contact.offices.map((office) => (
-              <div key={office.city}>
-                <p className="font-display text-lg font-semibold">
-                  {office.city}
-                </p>
-                <p className="mt-1 text-sm text-gray">{office.detail}</p>
-              </div>
-            ))}
-
-            <div className="space-y-2 border-t border-line pt-8">
-              <a
-                href={`mailto:${t.contact.email}`}
-                className="block text-sm underline-offset-4 transition-colors hover:text-petroleo hover:underline"
-              >
+          <p data-reveal style={{ "--i": 1 } as React.CSSProperties} className="mt-6 max-w-[40ch] text-lg leading-[1.55]">
+            {t.contact.lead}
+          </p>
+          {/* Contato direto ao lado do Otto ouvindo. */}
+          <div className="mt-10 flex items-end justify-between gap-6">
+            <div data-reveal style={{ "--i": 2 } as React.CSSProperties} className="flex flex-col gap-1 text-lg">
+              <a href={`mailto:${t.contact.email}`} className="inline-flex min-h-11 w-fit items-center font-semibold break-all underline underline-offset-4 hover:no-underline">
                 {t.contact.email}
               </a>
-              <a
-                href={`tel:${t.contact.phone.replace(/\s/g, "")}`}
-                className="block text-sm underline-offset-4 transition-colors hover:text-petroleo hover:underline"
-              >
+              <a href={`tel:${t.contact.phone.replace(/\s/g, "")}`} className="inline-flex min-h-11 w-fit items-center font-semibold underline underline-offset-4 hover:no-underline">
                 {t.contact.phone}
               </a>
+              <p className="mt-2 text-[15px]">{t.contact.places}</p>
+            </div>
+            <div data-reveal style={{ "--i": 3 } as React.CSSProperties} className="relative hidden aspect-square w-[34%] shrink-0 md:block">
+              <Image src="/otto/otto-16-ouvindo.png" alt="" fill sizes="16vw" className="otto-float object-contain" />
             </div>
           </div>
         </div>
 
-        <div>
+        <div className="md:col-span-6 md:col-start-7">
           {success ? (
-            <div
-              role="status"
-              className="rounded-2xl border border-line bg-paper-2 p-8"
-            >
-              <p className="font-display text-xl font-semibold">
-                {t.contact.form.success}
-              </p>
+            <div role="status" className="rounded-[24px] bg-ink p-8 text-paper md:p-10">
+              <p className="font-display text-[24px] leading-[1.2] font-extrabold">{t.contact.form.success}</p>
               <button
                 type="button"
-                className="mt-6 text-sm text-petroleo"
+                className="mt-6 inline-flex min-h-12 items-center rounded-full bg-paper px-6 text-base font-semibold text-ink transition-transform duration-200 active:scale-[0.97]"
                 onClick={() => setSuccess(false)}
               >
-                ←
+                {t.contact.form.again}
               </button>
             </div>
           ) : (
-            <form onSubmit={onSubmit} className="relative space-y-5" noValidate>
-              <div>
-                <label
-                  htmlFor="contact-name"
-                  className="mb-2 block font-mono text-[11px] tracking-wider uppercase"
-                >
-                  {t.contact.form.name}
-                </label>
-                <input
-                  id="contact-name"
-                  name="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full rounded-xl border border-line-control bg-paper-2 px-4 py-3 text-sm outline-none transition-colors focus:border-petroleo"
-                  autoComplete="name"
-                />
-                {errors.name && (
-                  <p className="mt-1.5 text-xs text-red-dark">{errors.name}</p>
-                )}
+            <form onSubmit={onSubmit} className="relative flex flex-col gap-5" noValidate>
+              <div className="grid gap-5 sm:grid-cols-2">
+                <div>
+                  <label htmlFor="contact-name" className="mb-2 block text-[15px] font-semibold">
+                    {t.contact.form.name}
+                  </label>
+                  <input
+                    id="contact-name"
+                    name="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className={`${field} ${focusRing}`}
+                    autoComplete="name"
+                    aria-invalid={Boolean(errors.name)}
+                    aria-describedby={errors.name ? "contact-name-error" : undefined}
+                  />
+                  {fieldError(errors.name, "contact-name-error")}
+                </div>
+                <div>
+                  <label htmlFor="contact-email" className="mb-2 block text-[15px] font-semibold">
+                    {t.contact.form.email}
+                  </label>
+                  <input
+                    id="contact-email"
+                    name="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className={`${field} ${focusRing}`}
+                    autoComplete="email"
+                    aria-invalid={Boolean(errors.email)}
+                    aria-describedby={errors.email ? "contact-email-error" : undefined}
+                  />
+                  {fieldError(errors.email, "contact-email-error")}
+                </div>
               </div>
 
               <div>
-                <label
-                  htmlFor="contact-email"
-                  className="mb-2 block font-mono text-[11px] tracking-wider uppercase"
-                >
-                  {t.contact.form.email}
-                </label>
-                <input
-                  id="contact-email"
-                  name="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full rounded-xl border border-line-control bg-paper-2 px-4 py-3 text-sm outline-none transition-colors focus:border-petroleo"
-                  autoComplete="email"
-                />
-                {errors.email && (
-                  <p className="mt-1.5 text-xs text-red-dark">{errors.email}</p>
-                )}
-              </div>
-
-              <div>
-                <label
-                  htmlFor="contact-message"
-                  className="mb-2 block font-mono text-[11px] tracking-wider uppercase"
-                >
+                <label htmlFor="contact-message" className="mb-2 block text-[15px] font-semibold">
                   {t.contact.form.message}
                 </label>
                 <textarea
                   id="contact-message"
                   name="message"
-                  rows={5}
+                  rows={6}
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  className="w-full resize-y rounded-xl border border-line-control bg-paper-2 px-4 py-3 text-sm outline-none transition-colors focus:border-petroleo"
+                  className={`${field} ${focusRing} resize-y`}
+                  aria-invalid={Boolean(errors.message)}
+                  aria-describedby={errors.message ? "contact-message-error" : undefined}
                 />
-                {errors.message && (
-                  <p className="mt-1.5 text-xs text-red-dark">{errors.message}</p>
-                )}
+                {fieldError(errors.message, "contact-message-error")}
               </div>
 
               {/* Campo isca contra spam: invisível para pessoas e para leitores de tela. */}
-              <div aria-hidden="true" className="absolute -left-[9999px] h-px w-px overflow-hidden">
+              {/* taste-skill-ignore: campo isca fora da tela, não é linha */}
+              <div aria-hidden="true" className="absolute -left-[9999px] h-px w-px overflow-hidden" /* taste-skill-ignore */>
                 <label htmlFor="contact-website">Website</label>
                 <input
                   id="contact-website"
@@ -213,11 +240,12 @@ export function Contact() {
               </div>
 
               {submitError && (
-                <p role="alert" className="rounded-xl border border-red/40 bg-red/5 px-4 py-3 text-sm text-red-dark">
+                <p role="alert" className="rounded-[16px] bg-ink px-5 py-4 text-base text-paper">
+                  <span aria-hidden="true">▲ </span>
                   {submitError === "unavailable" ? (
                     <>
                       {t.contact.form.errors.unavailable}{" "}
-                      <a href={`mailto:${t.contact.email}`} className="font-medium underline underline-offset-2">
+                      <a href={`mailto:${t.contact.email}`} className="font-semibold underline underline-offset-2">
                         {t.contact.email}
                       </a>
                       .
@@ -232,7 +260,7 @@ export function Contact() {
                 type="submit"
                 disabled={sending}
                 aria-disabled={sending}
-                className="inline-flex min-h-11 items-center rounded-full bg-red px-6 py-3.5 text-sm font-medium text-white transition-colors hover:bg-red-dark disabled:cursor-progress disabled:opacity-70"
+                className="inline-flex min-h-14 w-fit items-center rounded-full bg-ink px-8 text-lg font-semibold text-white transition-[background-color,transform] duration-200 hover:bg-ink-2 active:scale-[0.97] disabled:cursor-progress disabled:opacity-80"
               >
                 {sending ? t.contact.form.sending : t.contact.form.submit}
               </button>

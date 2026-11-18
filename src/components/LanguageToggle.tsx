@@ -3,32 +3,30 @@
 import { useLanguage } from "@/lib/i18n/context";
 import type { Locale } from "@/lib/i18n/dictionaries";
 
+/** PT e EN como dois botões; a escolha fica guardada para a próxima visita. */
 export function LanguageToggle({ className = "" }: { className?: string }) {
-  const { locale, setLocale } = useLanguage();
-
-  const options: Locale[] = ["pt", "en"];
+  const { locale, setLocale, t } = useLanguage();
+  const options: { id: Locale; label: string }[] = [
+    { id: "pt", label: "PT" },
+    { id: "en", label: "EN" },
+  ];
 
   return (
-    <div
-      className={`inline-flex items-center rounded-full border border-line-on-dark bg-ink/40 p-1 text-[11px] font-medium tracking-wider uppercase ${className}`}
-      role="group"
-      aria-label="Language"
-    >
+    <div className={`inline-flex items-center rounded-full bg-white/10 p-1 ${className}`} role="group" aria-label={t.nav.language}>
       {options.map((opt) => {
-        const active = locale === opt;
+        const active = locale === opt.id;
         return (
           <button
-            key={opt}
+            key={opt.id}
             type="button"
-            onClick={() => setLocale(opt)}
+            lang={opt.id === "pt" ? "pt-BR" : "en"}
+            onClick={() => setLocale(opt.id)}
             aria-pressed={active}
-            className={`rounded-full px-2.5 py-1 transition-colors duration-300 ${
-              active
-                ? "bg-red text-white"
-                : "text-paper/70 hover:text-paper"
+            className={`min-h-9 min-w-11 rounded-full px-3 text-[15px] font-semibold transition-colors duration-200 ${
+              active ? "bg-paper text-ink" : "text-paper/80 hover:text-paper"
             }`}
           >
-            {opt.toUpperCase()}
+            {opt.label}
           </button>
         );
       })}

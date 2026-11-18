@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import {
   AnimatePresence,
   motion,
@@ -7,50 +8,34 @@ import {
   useMotionValue,
   useSpring,
 } from "framer-motion";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import { MagneticButton } from "./MagneticButton";
 import { useLanguage } from "@/lib/i18n/context";
 import { useReducedMotion } from "@/lib/hooks/useReducedMotion";
 
+const ease = [0.23, 1, 0.32, 1] as const;
+
+/** Palavra que gira no título (do layout anterior): troca a cada 2,4 s, sem girar com movimento reduzido. */
 function RotatingWord({ words }: { words: readonly string[] }) {
   const [index, setIndex] = useState(0);
   const reduced = useReducedMotion();
 
   useEffect(() => {
     if (reduced) return;
-    const id = window.setInterval(() => {
-      setIndex((i) => (i + 1) % words.length);
-    }, 2400);
+    const id = window.setInterval(() => setIndex((i) => (i + 1) % words.length), 2400);
     return () => window.clearInterval(id);
   }, [reduced, words.length]);
 
   return (
-    <span className="relative inline-block min-h-[1.1em] text-red-on-dark">
-      <AnimatePresence mode="wait">
+    <span className="relative inline-block min-h-[1.05em] whitespace-nowrap text-red-on-dark">
+      <AnimatePresence mode="wait" initial={false}>
         <motion.span
           key={words[index]}
           className="inline-block"
-          initial={
-            reduced
-              ? { opacity: 0 }
-              : { opacity: 0, y: 18, filter: "blur(8px)" }
-          }
-          animate={
-            reduced
-              ? { opacity: 1 }
-              : { opacity: 1, y: 0, filter: "blur(0px)" }
-          }
-          exit={
-            reduced
-              ? { opacity: 0 }
-              : { opacity: 0, y: -10, filter: "blur(6px)" }
-          }
-          transition={{
-            opacity: { duration: 0.15, ease: "easeIn" },
-            y: { duration: 0.32, ease: [0.23, 1, 0.32, 1] },
-            filter: { duration: 0.32, ease: [0.23, 1, 0.32, 1] },
-          }}
+          initial={reduced ? { opacity: 0 } : { opacity: 0, y: 24, filter: "blur(8px)" }}
+          animate={reduced ? { opacity: 1 } : { opacity: 1, y: 0, filter: "blur(0px)" }}
+          exit={reduced ? { opacity: 0 } : { opacity: 0, y: -12, filter: "blur(6px)" }}
+          transition={{ opacity: { duration: 0.15 }, y: { duration: 0.34, ease }, filter: { duration: 0.34, ease } }}
         >
           {words[index]}
         </motion.span>
@@ -59,202 +44,110 @@ function RotatingWord({ words }: { words: readonly string[] }) {
   );
 }
 
+/** Três cards em perspectiva (do layout anterior), agora com conteúdo da All In e o Otto. */
 function HeroCards() {
   const { t } = useLanguage();
   const reduced = useReducedMotion();
   const [hovered, setHovered] = useState<number | null>(null);
+  const h = t.hero;
+  const spring = { type: "spring" as const, stiffness: 200, damping: 20 };
 
   return (
     <div
-      className="relative mx-auto h-[300px] w-full max-w-[520px] sm:h-[380px] md:h-[440px] lg:mx-0 lg:h-[480px] lg:max-w-none"
+      className="relative mx-auto h-[340px] w-full max-w-[520px] sm:h-[400px] md:h-[440px] lg:mx-0 lg:h-[500px] lg:max-w-none"
       style={{ perspective: reduced ? undefined : 1400 }}
     >
-      {/* Card 1 — browser (left) */}
+      {/* Site */}
       <motion.div
-        className="absolute top-[10%] left-[-2%] z-[1] h-[72%] w-[52%] overflow-hidden rounded-2xl border border-black/5 bg-paper shadow-[0_30px_60px_rgba(0,0,0,.35)]"
+        data-ui
+        className="absolute top-[16%] left-[-2%] z-[1] flex h-[68%] w-[50%] flex-col overflow-hidden rounded-[24px] bg-paper text-ink shadow-[0_30px_60px_rgba(0,0,0,.35)]" /* taste-skill-ignore: card 3D flutuando (estilo da abertura anterior) */
         style={{ transformStyle: "preserve-3d" }}
-        animate={
-          reduced
-            ? {}
-            : {
-                rotateY: -22,
-                rotateX: 8,
-                translateZ: hovered === 0 ? 48 : 0,
-                scale: hovered === 0 ? 1.04 : 1,
-              }
-        }
-        transition={{ type: "spring", stiffness: 200, damping: 20 }}
+        animate={reduced ? {} : { rotateY: -22, rotateX: 8, translateZ: hovered === 0 ? 48 : 0, scale: hovered === 0 ? 1.04 : 1 }}
+        transition={spring}
         onMouseEnter={() => setHovered(0)}
         onMouseLeave={() => setHovered(null)}
       >
-        <div className="flex items-center gap-1.5 border-b border-line px-3 py-2.5">
-          <span className="h-2 w-2 rounded-full bg-[#E5A0A0]" />
-          <span className="h-2 w-2 rounded-full bg-[#E5D0A0]" />
-          <span className="h-2 w-2 rounded-full bg-[#A0D0A0]" />
+        <div className="flex items-center justify-between bg-ink px-4 py-3 text-paper">
+          <span className="font-display text-[15px] font-extrabold">{h.cardBrowser.title}</span>
+          <span className="flex gap-1.5" aria-hidden="true">
+            <span className="h-2 w-2 rounded-full bg-red" />
+            <span className="h-2 w-2 rounded-full bg-paper/60" />
+            <span className="h-2 w-2 rounded-full bg-paper/60" />
+          </span>
         </div>
-        <div className="space-y-3 p-4">
-          <div className="flex h-24 items-center justify-center rounded-lg bg-paper-2">
-            <svg
-              width="28"
-              height="28"
-              viewBox="0 0 24 24"
-              fill="none"
-              className="text-gray"
-              aria-hidden
-            >
-              <rect
-                x="3"
-                y="5"
-                width="18"
-                height="14"
-                rx="2"
-                stroke="currentColor"
-                strokeWidth="1.5"
-              />
-              <circle cx="8.5" cy="10" r="1.5" fill="currentColor" />
-              <path
-                d="M3 16l5-4 4 3 3-2 6 5"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </div>
-          <div className="h-2 w-3/4 rounded bg-ink/10" />
-          <div className="h-2 w-1/2 rounded bg-ink/10" />
-          <div className="mt-4 inline-flex rounded-full bg-ink/5 px-2.5 py-1 font-mono text-[10px] tracking-wider text-ink uppercase">
-            {t.hero.cardBrowser.tag}
-          </div>
+        {/* Só o que cabe na faixa visível: o card vermelho cobre a metade direita deste. */}
+        <div className="flex flex-1 flex-col justify-end gap-3 p-4 pr-[52%]">
+          <span className="block h-16 rounded-xl bg-petroleo-soft" aria-hidden="true" />
+          <span className="inline-flex w-fit rounded-full bg-red px-3 py-1.5 text-[13px] font-semibold text-white">{t.work.ui.siteCta}</span>
+          <span className="inline-flex w-fit rounded-full bg-paper-2 px-3 py-1 text-[13px] font-semibold">{h.cardBrowser.tag}</span>
         </div>
       </motion.div>
 
-      {/* Card 2 — red center */}
+      {/* Card vermelho com o Otto */}
       <motion.div
-        className="absolute top-[2%] left-[22%] z-[3] flex h-[82%] w-[54%] flex-col justify-between overflow-hidden rounded-2xl bg-red p-5 text-white shadow-[0_40px_80px_rgba(186,32,39,.45)] md:p-6"
+        data-ui
+        className="absolute top-[8%] left-[25%] z-[3] flex h-[80%] w-[46%] flex-col justify-between rounded-[24px] bg-red p-5 text-white shadow-[0_40px_80px_rgba(186,32,39,.45)] md:p-7" /* taste-skill-ignore: card 3D flutuando (estilo da abertura anterior) */
         style={{ transformStyle: "preserve-3d" }}
-        animate={
-          reduced
-            ? {}
-            : {
-                rotateY: 0,
-                rotateX: 4,
-                translateZ: hovered === 1 ? 64 : 28,
-                scale: hovered === 1 ? 1.05 : 1,
-              }
-        }
-        transition={{ type: "spring", stiffness: 200, damping: 20 }}
+        animate={reduced ? {} : { rotateY: 0, rotateX: 4, translateZ: hovered === 1 ? 64 : 28, scale: hovered === 1 ? 1.05 : 1 }}
+        transition={spring}
         onMouseEnter={() => setHovered(1)}
         onMouseLeave={() => setHovered(null)}
       >
-        <div>
-          <p className="font-mono text-xs tracking-widest text-white/70">
-            {t.hero.cardCenter.number}
-          </p>
-          <h3 className="mt-4 font-display text-[clamp(1.35rem,2.2vw,1.85rem)] leading-tight font-semibold">
-            {t.hero.cardCenter.title}
-          </h3>
-          <p className="mt-3 text-sm leading-relaxed text-white/80">
-            {t.hero.cardCenter.body}
-          </p>
+        <div className="pr-[22%]">
+          <p className="font-display text-[clamp(22px,2.3vw,34px)] leading-[1.02] font-extrabold tracking-[-0.02em]">{h.cardCenter.title}</p>
+          <p className="mt-3 text-[15px] leading-[1.45] text-white/90">{h.cardCenter.body}</p>
         </div>
         <a
           href="#contact"
-          className="mt-6 inline-flex w-fit items-center rounded-full bg-white px-4 py-2.5 text-sm font-medium text-ink transition-transform hover:scale-[1.02]"
+          className="inline-flex min-h-11 w-fit items-center rounded-full bg-white px-5 text-[15px] font-semibold text-ink transition-transform duration-200 hover:scale-[1.03] active:scale-[0.97]"
         >
-          {t.hero.cardCenter.cta}
+          {h.cardCenter.cta}
         </a>
+        {/* Otto apoiado no topo do card: decorativo, não cobre texto nem botão. */}
+        <motion.div
+          aria-hidden
+          className="pointer-events-none absolute -top-[22%] -right-[12%] w-[48%]"
+          animate={reduced ? {} : { y: hovered === 1 ? -10 : 0, rotate: hovered === 1 ? -6 : 0 }}
+          transition={spring}
+        >
+          <div className="otto-float relative aspect-square w-full">
+            <Image src="/otto/otto-02-boas-vindas.png" alt="" fill priority sizes="(min-width: 1024px) 14vw, 30vw" className="object-contain drop-shadow-[0_18px_24px_rgba(0,0,0,.35)]" /* taste-skill-ignore: sombra do Otto flutuando, estilo 3D da abertura */ />
+          </div>
+        </motion.div>
       </motion.div>
 
-      {/* Otto (boas-vindas) apoiado no topo do card central. Decorativo: não
-          cobre o texto nem o CTA do card. */}
+      {/* Portal do cliente: o conteúdo fica na metade direita, que o card vermelho não cobre. */}
       <motion.div
-        aria-hidden
-        className="pointer-events-none absolute top-[-15%] left-[47%] z-[4] w-[30%] max-w-[170px]"
-        animate={reduced ? {} : { y: hovered === 1 ? -8 : 0 }}
-        transition={{ type: "spring", stiffness: 200, damping: 20 }}
-      >
-        <Image
-          src="/otto/otto-02-boas-vindas.png"
-          alt=""
-          width={720}
-          height={720}
-          priority
-          sizes="170px"
-          className="h-auto w-full drop-shadow-[0_18px_24px_rgba(0,0,0,.35)]"
-        />
-      </motion.div>
-
-      {/* Card 3 — dashboard (right) */}
-      <motion.div
-        className="absolute top-[14%] right-[-2%] z-[2] flex h-[72%] w-[52%] overflow-hidden rounded-2xl border border-white/10 bg-ink-2 shadow-[0_30px_60px_rgba(0,0,0,.4)]"
+        data-ui
+        className="absolute top-[20%] right-[-2%] z-[2] flex h-[66%] w-[48%] flex-col gap-3 overflow-hidden rounded-[24px] bg-ink-2 py-5 pr-5 pl-24 text-paper sm:pl-28 lg:pl-32 shadow-[0_30px_60px_rgba(0,0,0,.4)]" /* taste-skill-ignore: card 3D flutuando (estilo da abertura anterior) */
         style={{ transformStyle: "preserve-3d" }}
-        animate={
-          reduced
-            ? {}
-            : {
-                rotateY: 20,
-                rotateX: 8,
-                translateZ: hovered === 2 ? 48 : 0,
-                scale: hovered === 2 ? 1.04 : 1,
-              }
-        }
-        transition={{ type: "spring", stiffness: 200, damping: 20 }}
+        animate={reduced ? {} : { rotateY: 20, rotateX: 8, translateZ: hovered === 2 ? 48 : 0, scale: hovered === 2 ? 1.04 : 1 }}
+        transition={spring}
         onMouseEnter={() => setHovered(2)}
         onMouseLeave={() => setHovered(null)}
       >
-        <aside className="flex w-9 flex-col items-center gap-3 border-r border-white/10 py-4 md:w-11">
-          {["O", "A", "U", "P", "R", "S"].map((icon) => (
-            <span
-              key={icon}
-              className="flex h-5 w-5 items-center justify-center rounded text-[9px] text-white/40"
-            >
-              {icon}
-            </span>
+        {/* No celular o card é estreito: só a barra de progresso aparece. */}
+        <p className="hidden text-[13px] text-paper/75 sm:block">{h.cardPortal.title}</p>
+        <p className="hidden font-display text-[clamp(16px,1.5vw,22px)] leading-tight font-extrabold sm:block">{t.work.ui.appTitle}</p>
+        <div className="flex gap-1" aria-hidden="true">
+          {[0, 1, 2, 3, 4].map((i) => (
+            <span key={i} className={`h-1.5 flex-1 rounded-full ${i < 3 ? "bg-petroleo-soft" : "bg-white/15"}`} />
           ))}
-        </aside>
-        <div className="flex-1 space-y-2.5 overflow-hidden p-3 md:p-4">
-          <p className="font-mono text-[10px] tracking-wider text-white/50 uppercase">
-            {t.hero.cardDash.title}
-          </p>
-          <p className="font-display text-xl font-semibold text-white md:text-2xl">
-            {t.hero.cardDash.revenue}
-          </p>
-          <p className="text-[10px] text-white/45">
-            {t.hero.cardDash.revenueLabel}
-          </p>
-          <svg viewBox="0 0 160 48" className="h-9 w-full" aria-hidden>
-            <path
-              d="M0 36 C20 34, 30 20, 50 22 S80 40, 100 18 S130 8, 160 14"
-              fill="none"
-              className="stroke-red"
-              strokeWidth="2.5"
-            />
-          </svg>
-          <div className="border-t border-white/10 pt-2">
-            <p className="font-display text-sm text-white">
-              {t.hero.cardDash.users}
-            </p>
-            <p className="text-[9px] text-white/45">
-              {t.hero.cardDash.usersLabel}
-            </p>
-          </div>
-          <div>
-            <p className="mb-1.5 text-[9px] tracking-wider text-white/40 uppercase">
-              {t.hero.cardDash.activity}
-            </p>
-            <div className="space-y-1.5">
-              {[1, 2, 3].map((n) => (
-                <div key={n} className="h-1.5 w-full rounded bg-white/10" />
-              ))}
-            </div>
-          </div>
+        </div>
+        <p className="hidden text-[13px] text-paper/75 sm:block">{h.cardPortal.progress}</p>
+        <div className="mt-auto hidden rounded-[16px] bg-red-soft p-3 text-ink sm:block">
+          <p className="text-[13px] text-gray">{h.cardPortal.next}</p>
+          <p className="text-[15px] leading-tight font-semibold">{h.cardPortal.nextValue}</p>
         </div>
       </motion.div>
     </div>
   );
 }
 
+/**
+ * Abertura: "Nós criamos" com a palavra que gira, a frase da referência, a ação
+ * principal (botão magnético) e os cards em perspectiva que acompanham o mouse.
+ */
 export function Hero() {
   const { t } = useLanguage();
   const reduced = useReducedMotion();
@@ -267,12 +160,9 @@ export function Hero() {
   const onMove = (e: React.MouseEvent<HTMLElement>) => {
     if (reduced) return;
     const rect = e.currentTarget.getBoundingClientRect();
-    const px = (e.clientX - rect.left) / rect.width - 0.5;
-    const py = (e.clientY - rect.top) / rect.height - 0.5;
-    rotateY.set(px * 10);
-    rotateX.set(-py * 8);
+    rotateY.set(((e.clientX - rect.left) / rect.width - 0.5) * 10);
+    rotateX.set(-((e.clientY - rect.top) / rect.height - 0.5) * 8);
   };
-
   const onLeave = () => {
     rotateX.set(0);
     rotateY.set(0);
@@ -281,76 +171,51 @@ export function Hero() {
   return (
     <section
       id="top"
-      className="relative overflow-hidden bg-ink pt-[96px] pb-16 text-paper md:pb-24 lg:min-h-screen lg:pb-10"
+      className="relative overflow-hidden bg-ink text-paper"
       onMouseMove={onMove}
       onMouseLeave={onLeave}
     >
-      <div className="mx-auto grid max-w-[1400px] items-center gap-12 px-5 md:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8 lg:px-10">
-        <div className="relative z-10 max-w-xl">
-          <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-line-on-dark px-3 py-1.5">
-            <span className="pulse-dot h-2 w-2 rounded-full bg-emerald-400" />
-            <span className="font-mono text-[11px] tracking-wide text-paper/75">
-              {t.hero.badge}
+      <div className="mx-auto grid max-w-[1440px] items-center gap-12 px-5 pt-[8svh] pb-20 md:px-8 lg:min-h-[calc(100svh-72px)] lg:grid-cols-[1.05fr_0.95fr] lg:gap-8 lg:pb-24">
+        <div className="relative z-10">
+          <h1 className="font-display text-[clamp(40px,7.4vw,124px)] leading-[0.92] font-extrabold tracking-[-0.045em]">
+            <span className="sr-only">{t.hero.srTitle}</span>
+            <span aria-hidden="true" className="mask-line">
+              <span style={{ "--i": 0 } as React.CSSProperties}>{t.hero.line1}</span>
             </span>
-          </div>
-
-          <h1 className="font-display text-[clamp(3rem,9vw,7.25rem)] leading-[0.95] font-bold tracking-[-0.04em]">
-            <span className="block">{t.hero.line1}</span>
-            <RotatingWord words={t.hero.rotating} />
+            <span aria-hidden="true" className="block">
+              <RotatingWord words={t.hero.rotating} />
+            </span>
           </h1>
 
-          <p className="mt-6 max-w-md text-[15px] leading-relaxed text-paper/70 md:text-base">
-            {t.hero.subtitle}
-          </p>
-
-          <div className="mt-8 flex flex-wrap items-center gap-3">
-            <MagneticButton
-              href="#contact"
-              className="inline-flex items-center rounded-full bg-red px-6 py-3.5 text-sm font-medium text-white transition-colors hover:bg-red-dark"
-            >
-              {t.hero.ctaPrimary}
-            </MagneticButton>
-            <MagneticButton
-              href="#work"
-              className="inline-flex items-center rounded-full border border-line-on-dark px-6 py-3.5 text-sm font-medium text-paper transition-colors hover:border-paper/50"
-            >
-              {t.hero.ctaSecondary}
-            </MagneticButton>
-          </div>
-
-          <div className="mt-10 flex flex-wrap items-stretch gap-0 border-t border-line-on-dark pt-6">
-            {t.hero.stats.map((stat, i) => (
-              <div
-                key={stat.label}
-                className={`flex min-w-[120px] flex-col pr-6 ${
-                  i > 0 ? "border-l border-line-on-dark pl-6" : ""
-                }`}
+          <div className="after-lines">
+            <p className="mt-8 max-w-[40ch] text-[19px] leading-[1.5] md:text-[22px] md:leading-[1.45]">{t.hero.lead}</p>
+            <div className="mt-9 flex flex-wrap items-center gap-3">
+              <MagneticButton
+                href="#contact"
+                className="inline-flex min-h-14 items-center rounded-full bg-red px-8 text-lg font-semibold text-white transition-colors duration-200 hover:bg-red-dark"
               >
-                <span className="font-display text-2xl font-semibold md:text-3xl">
-                  {stat.value}
-                </span>
-                <span className="mt-1 font-mono text-[10px] tracking-wider text-paper/50 uppercase">
-                  {stat.label}
-                </span>
-              </div>
-            ))}
+                {t.hero.cta}
+              </MagneticButton>
+              <MagneticButton
+                href="#process"
+                className="inline-flex min-h-14 items-center rounded-full bg-white/10 px-7 text-lg font-semibold text-paper transition-colors duration-200 hover:bg-white/20"
+              >
+                {t.hero.secondary}
+              </MagneticButton>
+            </div>
+            <p className="mt-6 text-[15px] text-paper/75">{t.hero.where}</p>
           </div>
         </div>
 
-        <motion.div
-          className="relative w-full"
-          style={reduced ? undefined : { transform }}
-        >
+        <motion.div className="relative w-full" style={reduced ? undefined : { transform }}>
           <HeroCards />
         </motion.div>
       </div>
 
-      <div className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 lg:flex">
-        <span className="font-mono text-[10px] tracking-[0.2em] text-paper/40 uppercase">
-          {t.hero.scroll}
-        </span>
-        <div className="relative h-12 w-px overflow-hidden bg-line-on-dark">
-          <span className="scroll-drip absolute top-0 left-0 h-4 w-px bg-red" />
+      <div className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 lg:flex" aria-hidden="true">
+        <span className="text-[13px] text-paper/60">{t.hero.scroll}</span>
+        <div className="relative h-12 w-0.5 overflow-hidden rounded-full bg-white/15">
+          <span className="scroll-drip absolute top-0 left-0 h-4 w-0.5 rounded-full bg-red-on-dark" />
         </div>
       </div>
     </section>

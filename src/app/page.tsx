@@ -1,11 +1,9 @@
 import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
-import { Services } from "@/components/Services";
-import { StatsBar } from "@/components/StatsBar";
+import { Hand } from "@/components/Hand";
 import { Work } from "@/components/Work";
 import { Process } from "@/components/Process";
-import { Testimonials } from "@/components/Testimonials";
-import { CTABand } from "@/components/CTABand";
+import { About } from "@/components/About";
 import { Contact } from "@/components/Contact";
 import { Footer } from "@/components/Footer";
 
@@ -15,12 +13,10 @@ export default function Home() {
       <Header />
       <main>
         <Hero />
-        <Services />
-        <StatsBar />
+        <Hand />
         <Work />
         <Process />
-        <Testimonials />
-        <CTABand />
+        <About />
         <Contact />
       </main>
       <Footer />
