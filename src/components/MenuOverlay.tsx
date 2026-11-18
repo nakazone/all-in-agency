@@ -48,9 +48,9 @@ export function MenuOverlay({ open, onClose }: MenuOverlayProps) {
                     <a
                       href={link.href}
                       onClick={onClose}
-                      className="group flex items-baseline gap-4 py-2 font-display text-[clamp(2rem,8vw,5.5rem)] font-semibold tracking-tight text-paper transition-colors hover:text-red md:gap-6"
+                      className="group flex items-baseline gap-4 py-2 font-display text-[clamp(2rem,8vw,5.5rem)] font-semibold tracking-tight text-paper transition-colors hover:text-red-on-dark md:gap-6"
                     >
-                      <span className="font-mono text-sm text-red md:text-base">
+                      <span className="font-mono text-sm text-paper/60 md:text-base">
                         {link.num}
                       </span>
                       <span className="inline-block transition-transform duration-300 group-hover:translate-x-3">
@@ -83,7 +83,7 @@ export function MenuOverlay({ open, onClose }: MenuOverlayProps) {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={s.label}
-                      className="flex h-9 w-9 items-center justify-center rounded-full border border-line-on-dark text-xs text-paper/70 transition-colors hover:border-red hover:text-red"
+                      className="flex h-9 w-9 items-center justify-center rounded-full border border-line-on-dark text-xs text-paper/70 transition-colors hover:border-red-on-dark hover:text-paper"
                     >
                       {s.label[0]}
                     </a>

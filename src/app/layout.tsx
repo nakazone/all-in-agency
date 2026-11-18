@@ -1,24 +1,22 @@
 import type { Metadata } from "next";
-import {
-  Bricolage_Grotesque,
-  IBM_Plex_Mono,
-  IBM_Plex_Sans,
-} from "next/font/google";
+import { IBM_Plex_Mono } from "next/font/google";
+import localFont from "next/font/local";
 // globals.css primeiro: declara a ordem das camadas de CSS antes do tema Astryx.
 import "./globals.css";
 import { Providers } from "@/components/Providers";
 
-const bricolage = Bricolage_Grotesque({
-  subsets: ["latin"],
+// Fontes da referência da marca (variáveis, licença OFL em ./fonts).
+const bricolage = localFont({
+  src: "./fonts/bricolage-grotesque.woff2",
   variable: "--font-bricolage",
-  weight: ["600", "700"],
+  weight: "200 800",
   display: "swap",
 });
 
-const plexSans = IBM_Plex_Sans({
-  subsets: ["latin"],
-  variable: "--font-plex-sans",
-  weight: ["400", "500", "600"],
+const geist = localFont({
+  src: "./fonts/geist.woff2",
+  variable: "--font-geist",
+  weight: "100 900",
   display: "swap",
 });
 
@@ -60,7 +58,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${bricolage.variable} ${plexSans.variable} ${plexMono.variable} h-full antialiased`}
+      className={`${bricolage.variable} ${geist.variable} ${plexMono.variable} h-full antialiased`}
     >
       <body className="min-h-full font-sans">
         <Providers>{children}</Providers>

@@ -12,7 +12,7 @@ export function Services() {
     <section id="services" className="bg-paper py-20 text-ink md:py-28">
       <div className="mx-auto grid max-w-[1400px] gap-12 px-5 md:grid-cols-[0.85fr_1.15fr] md:gap-16 md:px-8 lg:px-10">
         <div>
-          <p className="font-mono text-xs tracking-[0.18em] text-red">
+          <p className="font-mono text-xs tracking-[0.18em] text-petroleo">
             {t.services.eyebrow}
           </p>
           <h2 className="mt-4 font-display text-[clamp(2.4rem,5vw,4.5rem)] leading-[1.05] font-semibold tracking-tight">
@@ -31,7 +31,7 @@ export function Services() {
                   className="flex w-full items-start gap-4 py-5 text-left md:items-center md:gap-6 md:py-6"
                   aria-expanded={isOpen}
                 >
-                  <span className="font-mono text-sm text-red md:text-base">
+                  <span className="font-mono text-sm text-petroleo md:text-base">
                     {item.num}
                   </span>
                   <div className="min-w-0 flex-1">

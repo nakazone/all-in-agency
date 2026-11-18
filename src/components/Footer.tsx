@@ -12,7 +12,7 @@ export function Footer() {
         aria-hidden
         className="pointer-events-none absolute inset-x-0 bottom-[-4%] flex justify-center overflow-hidden opacity-[0.06]"
       >
-        <Logo variant="light" className="h-auto w-[min(90vw,920px)]" />
+        <Logo variant="mono-light" className="h-auto w-[min(90vw,920px)]" />
       </div>
 
       <div className="relative mx-auto max-w-[1400px] px-5 md:px-8 lg:px-10">
@@ -36,7 +36,7 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={s.label}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-line-on-dark text-[11px] text-paper/60 transition-colors hover:border-red hover:text-red"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-line-on-dark text-[11px] text-paper/60 transition-colors hover:border-red-on-dark hover:text-paper"
                 >
                   {s.label.slice(0, 2)}
                 </a>

@@ -64,7 +64,7 @@ export function Work() {
       <div className="mx-auto max-w-[1400px] px-5 md:px-8 lg:px-10">
         <div className="mb-10 flex flex-wrap items-end justify-between gap-6">
           <div>
-            <p className="font-mono text-xs tracking-[0.18em] text-red">
+            <p className="font-mono text-xs tracking-[0.18em] text-petroleo">
               {t.work.eyebrow}
             </p>
             <h2 className="mt-4 font-display text-[clamp(2.4rem,5vw,4.5rem)] leading-[1.05] font-semibold tracking-tight">
@@ -72,7 +72,7 @@ export function Work() {
             </h2>
             <a
               href="#contact"
-              className="mt-5 inline-flex text-sm text-gray transition-colors hover:text-red"
+              className="mt-5 inline-flex text-sm text-petroleo underline-offset-4 transition-colors hover:underline"
             >
               {t.work.viewAll}
             </a>
@@ -83,7 +83,7 @@ export function Work() {
               type="button"
               onClick={() => scrollBy(-1)}
               aria-label={t.work.prev}
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-line text-ink transition-colors hover:border-red hover:text-red"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-line text-ink transition-colors hover:border-petroleo hover:text-petroleo"
             >
               ←
             </button>
@@ -91,7 +91,7 @@ export function Work() {
               type="button"
               onClick={() => scrollBy(1)}
               aria-label={t.work.next}
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-line text-ink transition-colors hover:border-red hover:text-red"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-line text-ink transition-colors hover:border-petroleo hover:text-petroleo"
             >
               →
             </button>

@@ -1,0 +1,157 @@
+{
+  "name": "allin",
+  "mode": "both",
+  "settings": [
+    {
+      "thing": "accent",
+      "value": "#BA2027",
+      "source": "dial"
+    },
+    {
+      "thing": "neutral",
+      "value": "#626E77",
+      "source": "dial"
+    },
+    {
+      "thing": "info",
+      "value": "#24606B",
+      "source": "dial"
+    },
+    {
+      "thing": "--color-accent",
+      "value": "#BA2027",
+      "source": "token",
+      "mode": "dark"
+    },
+    {
+      "thing": "--color-on-accent",
+      "value": "#FFFFFF",
+      "source": "token",
+      "mode": "dark"
+    },
+    {
+      "thing": "--focus-outline-color",
+      "value": "#24606B",
+      "source": "token",
+      "mode": "light"
+    },
+    {
+      "thing": "--focus-outline-color",
+      "value": "#D3E5E8",
+      "source": "token",
+      "mode": "dark"
+    },
+    {
+      "thing": "--color-background-body",
+      "value": "#F3F5F7",
+      "source": "token",
+      "mode": "light"
+    },
+    {
+      "thing": "--color-background-body",
+      "value": "#242020",
+      "source": "token",
+      "mode": "dark"
+    },
+    {
+      "thing": "--color-background-surface",
+      "value": "#FFFFFF",
+      "source": "token",
+      "mode": "light"
+    },
+    {
+      "thing": "--color-background-surface",
+      "value": "#302A2A",
+      "source": "token",
+      "mode": "dark"
+    },
+    {
+      "thing": "--color-text-primary",
+      "value": "#242020",
+      "source": "token",
+      "mode": "light"
+    },
+    {
+      "thing": "--color-text-secondary",
+      "value": "#515D66",
+      "source": "token",
+      "mode": "light"
+    },
+    {
+      "thing": "corners",
+      "value": "small",
+      "source": "dial"
+    },
+    {
+      "thing": "--font-family-body",
+      "value": "var(--font-geist, Geist), Arial, sans-serif",
+      "source": "token"
+    },
+    {
+      "thing": "--font-family-heading",
+      "value": "var(--font-bricolage, 'Bricolage Grotesque'), Arial, sans-serif",
+      "source": "token"
+    },
+    {
+      "thing": "--radius-container",
+      "value": "16px",
+      "source": "token"
+    },
+    {
+      "thing": "--color-info-muted",
+      "value": "#D3E5E8",
+      "source": "token",
+      "mode": "light"
+    },
+    {
+      "thing": "--color-background-card",
+      "value": "#302A2A",
+      "source": "token",
+      "mode": "dark"
+    },
+    {
+      "thing": "--color-background-card",
+      "value": "#FFFFFF",
+      "source": "token",
+      "mode": "light"
+    },
+    {
+      "thing": "--color-accent-muted",
+      "value": "#F6DADB",
+      "source": "token",
+      "mode": "light"
+    },
+    {
+      "thing": "--color-text-error",
+      "value": "#A3061F",
+      "source": "token",
+      "mode": "light"
+    },
+    {
+      "thing": "--color-on-error-muted",
+      "value": "#A3061F",
+      "source": "token",
+      "mode": "light"
+    },
+    {
+      "thing": "--color-text-secondary",
+      "value": "#B1BAC2",
+      "source": "token",
+      "mode": "dark"
+    },
+    {
+      "thing": "--color-background-inverted",
+      "value": "#242020",
+      "source": "token",
+      "mode": "light"
+    },
+    {
+      "thing": "--color-background-inverted",
+      "value": "#4A4242",
+      "source": "token",
+      "mode": "dark"
+    }
+  ],
+  "lifted": [],
+  "palette": "adc2088136bb5950582fc280e65218b4736a5966830213ccd6746ebece1a025e"
+}
