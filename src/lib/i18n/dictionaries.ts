@@ -22,8 +22,13 @@ export const dictionaries = {
       language: "Idioma",
     },
     hero: {
-      line1: "Sites, páginas",
-      line2: "e aplicações.",
+      line1: "Nós criamos",
+      rotating: ["Sites.", "Landing pages.", "Aplicações web."],
+      srTitle: "Nós criamos sites, landing pages e aplicações web.",
+      scroll: "Role para ver",
+      cardBrowser: { tag: "Site", title: "Casa Piso", line: "Pisos para casa e comércio" },
+      cardCenter: { title: "O crescimento começa aqui.", body: "Landing pages feitas para transformar visitas em contatos.", cta: "Vamos conversar" },
+      cardPortal: { title: "Seu projeto", next: "Próximo passo", nextValue: "Aprovar a página inicial", progress: "3 de 5 etapas" },
       lead: "A All In cria sites, landing pages e aplicações web que conectam presença digital, operação e atendimento. Você acompanha as entregas e sabe qual é o próximo passo.",
       cta: "Iniciar um projeto",
       secondary: "Ver como funciona",
@@ -67,6 +72,7 @@ export const dictionaries = {
     work: {
       title: "Como fica na prática",
       demoNote: "Demonstração com dados fictícios",
+      lead: "Três jeitos de a All In aparecer para o seu cliente. Passe o mouse ou toque em cada um para ver a tela.",
       items: [
         {
           id: "site",
@@ -189,6 +195,12 @@ export const dictionaries = {
     footer: {
       line: "Sites, landing pages e aplicações web. Inglês e português.",
       rights: "Todos os direitos reservados.",
+      cta: "Pronto para ir all in?",
+      ctaButton: "Iniciar um projeto",
+      navTitle: "Navegação",
+      servicesTitle: "Serviços",
+      contactTitle: "Contato",
+      top: "Voltar ao topo",
     },
   },
   en: {
@@ -208,8 +220,13 @@ export const dictionaries = {
       language: "Language",
     },
     hero: {
-      line1: "Sites, pages",
-      line2: "and web apps.",
+      line1: "We build",
+      rotating: ["Websites.", "Landing pages.", "Web apps."],
+      srTitle: "We build websites, landing pages and web apps.",
+      scroll: "Scroll to see",
+      cardBrowser: { tag: "Website", title: "Casa Piso", line: "Floors for homes and shops" },
+      cardCenter: { title: "Growth starts here.", body: "Landing pages built to turn visits into leads.", cta: "Let's talk" },
+      cardPortal: { title: "Your project", next: "Next step", nextValue: "Approve the home page", progress: "3 of 5 stages" },
       lead: "All In builds websites, landing pages and web applications that connect your digital presence, operations and customer intake. You can follow the work and see what happens next.",
       cta: "Start a project",
       secondary: "See how it works",
@@ -253,6 +270,7 @@ export const dictionaries = {
     work: {
       title: "What it looks like",
       demoNote: "Demonstration with sample data",
+      lead: "Three ways All In shows up for your customers. Hover or tap each one to see the screen.",
       items: [
         {
           id: "site",
@@ -375,6 +393,12 @@ export const dictionaries = {
     footer: {
       line: "Websites, landing pages and web apps. English and Portuguese.",
       rights: "All rights reserved.",
+      cta: "Ready to go all in?",
+      ctaButton: "Start a project",
+      navTitle: "Navigation",
+      servicesTitle: "Services",
+      contactTitle: "Contact",
+      top: "Back to top",
     },
   },
 } as const;

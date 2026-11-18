@@ -121,7 +121,7 @@ export function Contact() {
     ) : null;
 
   return (
-    <section id="contact" aria-labelledby="contact-title" className="overflow-hidden bg-red pt-12 pb-28 text-white md:pb-40">
+    <section id="contact" aria-labelledby="contact-title" className="overflow-hidden bg-red pt-12 pb-24 text-white md:pb-28">
       {/* Faixa de poses do Otto: decorativa, passa devagar e pausa com o mouse ou o foco. */}
       <div className="marquee" aria-hidden="true">
         <div className="marquee-track flex w-max gap-3">
@@ -141,17 +141,20 @@ export function Contact() {
           <p data-reveal style={{ "--i": 1 } as React.CSSProperties} className="mt-6 max-w-[40ch] text-lg leading-[1.55]">
             {t.contact.lead}
           </p>
-          <div data-reveal style={{ "--i": 2 } as React.CSSProperties} className="mt-10 flex flex-col gap-1 text-lg">
-            <a href={`mailto:${t.contact.email}`} className="inline-flex min-h-11 w-fit items-center font-semibold underline underline-offset-4 hover:no-underline">
-              {t.contact.email}
-            </a>
-            <a href={`tel:${t.contact.phone.replace(/\s/g, "")}`} className="inline-flex min-h-11 w-fit items-center font-semibold underline underline-offset-4 hover:no-underline">
-              {t.contact.phone}
-            </a>
-            <p className="mt-2 text-[15px]">{t.contact.places}</p>
-          </div>
-          <div data-reveal style={{ "--i": 3 } as React.CSSProperties} className="relative mt-12 hidden aspect-square w-[62%] md:block">
-            <Image src="/otto/otto-16-ouvindo.png" alt="" fill sizes="25vw" className="object-contain" />
+          {/* Contato direto ao lado do Otto ouvindo. */}
+          <div className="mt-10 flex items-end justify-between gap-6">
+            <div data-reveal style={{ "--i": 2 } as React.CSSProperties} className="flex flex-col gap-1 text-lg">
+              <a href={`mailto:${t.contact.email}`} className="inline-flex min-h-11 w-fit items-center font-semibold break-all underline underline-offset-4 hover:no-underline">
+                {t.contact.email}
+              </a>
+              <a href={`tel:${t.contact.phone.replace(/\s/g, "")}`} className="inline-flex min-h-11 w-fit items-center font-semibold underline underline-offset-4 hover:no-underline">
+                {t.contact.phone}
+              </a>
+              <p className="mt-2 text-[15px]">{t.contact.places}</p>
+            </div>
+            <div data-reveal style={{ "--i": 3 } as React.CSSProperties} className="relative hidden aspect-square w-[34%] shrink-0 md:block">
+              <Image src="/otto/otto-16-ouvindo.png" alt="" fill sizes="16vw" className="otto-float object-contain" />
+            </div>
           </div>
         </div>
 

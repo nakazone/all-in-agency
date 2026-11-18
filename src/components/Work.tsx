@@ -1,6 +1,9 @@
 "use client";
 
+import { AnimatePresence, motion, useMotionTemplate, useMotionValue, useSpring } from "framer-motion";
+import { useState } from "react";
 import { useLanguage } from "@/lib/i18n/context";
+import { useReducedMotion } from "@/lib/hooks/useReducedMotion";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 
 type UI = Dictionary["work"]["ui"];
@@ -20,7 +23,7 @@ function SiteFragment({ ui }: { ui: UI }) {
       </div>
       <div className="grid flex-1 gap-6 p-8 sm:grid-cols-[1.2fr_1fr] sm:p-10">
         <div className="flex flex-col justify-end gap-5">
-          <p className="font-display text-[clamp(28px,3.4vw,52px)] leading-[0.95] font-extrabold tracking-[-0.03em]">{ui.siteTitle}</p>
+          <p className="font-display text-[clamp(26px,2.4vw,36px)] leading-[1] font-extrabold tracking-[-0.03em]">{ui.siteTitle}</p>
           <p className="text-base text-gray">{ui.siteBody}</p>
           <span className="inline-flex w-fit rounded-full bg-red px-5 py-3 text-sm font-semibold text-white">{ui.siteCta}</span>
         </div>
@@ -39,7 +42,7 @@ function SiteFragment({ ui }: { ui: UI }) {
 function LandingFragment({ ui }: { ui: UI }) {
   return (
     <div data-ui className="flex h-full flex-col justify-between overflow-hidden rounded-[24px] bg-red p-8 text-white sm:p-10">
-      <p className="font-display text-[clamp(30px,3.8vw,58px)] leading-[0.95] font-extrabold tracking-[-0.03em]">{ui.lpTitle}</p>
+      <p className="font-display text-[clamp(26px,2.4vw,36px)] leading-[1] font-extrabold tracking-[-0.03em]">{ui.lpTitle}</p>
       <div className="mt-8 grid gap-3 rounded-[16px] bg-white p-5 text-ink sm:grid-cols-[1fr_1fr_auto] sm:items-end">
         <label className="flex flex-col gap-1 text-sm font-medium">
           {ui.lpName}
@@ -95,45 +98,115 @@ function PortalFragment({ ui }: { ui: UI }) {
   );
 }
 
-const blocks = [
-  { Fragment: SiteFragment, height: "lg:h-[480px]" },
-  { Fragment: LandingFragment, height: "lg:h-[440px]" },
-  { Fragment: PortalFragment, height: "lg:h-[520px]" },
-];
+const fragments = [SiteFragment, LandingFragment, PortalFragment];
 
 /**
- * Como fica na prática: um bloco por tipo de entrega. O fragmento grande sangra pela
- * borda esquerda; à direita, o título, a descrição e o aviso de demonstração.
+ * Como fica na prática: vitrine interativa. À esquerda, os três tipos de entrega; à direita,
+ * a tela do tipo ativo, que troca ao passar o mouse, focar ou tocar, e inclina levemente
+ * com o ponteiro. No celular, cada tipo aparece com a sua tela logo abaixo.
  */
 export function Work() {
   const { t } = useLanguage();
   const w = t.work;
+  const reduced = useReducedMotion();
+  const [active, setActive] = useState(0);
+  const tiltX = useMotionValue(0);
+  const tiltY = useMotionValue(0);
+  const sx = useSpring(tiltX, { stiffness: 160, damping: 18 });
+  const sy = useSpring(tiltY, { stiffness: 160, damping: 18 });
+  const transform = useMotionTemplate`perspective(1600px) rotateX(${sx}deg) rotateY(${sy}deg)`;
+  const Active = fragments[active];
+
+  const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (reduced) return;
+    const r = e.currentTarget.getBoundingClientRect();
+    tiltY.set(((e.clientX - r.left) / r.width - 0.5) * 8);
+    tiltX.set(-((e.clientY - r.top) / r.height - 0.5) * 6);
+  };
+  const onLeave = () => {
+    tiltX.set(0);
+    tiltY.set(0);
+  };
 
   return (
-    <section id="work" aria-labelledby="work-title" className="overflow-hidden bg-white py-28 text-ink md:py-40">
-      <div className="mx-auto max-w-[1440px] px-5 md:px-8">
-        <h2 id="work-title" data-reveal className="font-display text-[clamp(40px,5vw,76px)] leading-[0.95] font-extrabold tracking-[-0.04em]">
-          {w.title}
-        </h2>
+    <section id="work" aria-labelledby="work-title" className="bg-white py-28 text-ink md:py-40">
+      <div className="mx-auto grid max-w-[1440px] gap-12 px-5 md:px-8 lg:grid-cols-12 lg:gap-6">
+        <div className="lg:col-span-5">
+          <h2 id="work-title" data-reveal className="font-display text-[clamp(40px,5vw,76px)] leading-[0.95] font-extrabold tracking-[-0.04em]">
+            {w.title}
+          </h2>
+          <p data-reveal style={{ "--i": 1 } as React.CSSProperties} className="mt-6 max-w-[40ch] text-lg leading-[1.55]">
+            {w.lead}
+          </p>
 
-        <div className="mt-16 flex flex-col gap-28 md:mt-24 md:gap-36">
-          {w.items.map((item, i) => {
-            const b = blocks[i];
-            return (
-              <article key={item.id} className="grid gap-8 lg:grid-cols-12 lg:items-end lg:gap-6">
-                <div data-reveal className={`min-h-[420px] lg:col-span-7 lg:-ml-8 ${b.height}`}>
-                  <b.Fragment ui={w.ui} />
-                </div>
-                <div className="lg:col-span-4 lg:col-start-9">
-                  <div data-reveal style={{ "--i": 1 } as React.CSSProperties}>
-                    <h3 className="font-display text-[40px] leading-[1.02] font-extrabold tracking-[-0.03em]">{item.title}</h3>
-                    <p className="mt-4 text-lg leading-[1.55]">{item.body}</p>
-                    <p className="mt-4 text-[15px] text-gray">{w.demoNote}</p>
+          <ul className="mt-10 flex flex-col gap-3">
+            {w.items.map((item, i) => {
+              const on = active === i;
+              const Fragment = fragments[i];
+              return (
+                <li key={item.id} data-reveal style={{ "--i": i + 2 } as React.CSSProperties}>
+                  <button
+                    type="button"
+                    aria-pressed={on}
+                    aria-controls="work-preview"
+                    onMouseEnter={() => setActive(i)}
+                    onFocus={() => setActive(i)}
+                    onClick={() => setActive(i)}
+                    className={`group w-full rounded-[24px] p-6 text-left transition-colors duration-300 ${on ? "bg-paper" : "hover:bg-paper/60"}`}
+                  >
+                    <span className="flex items-center justify-between gap-4">
+                      <span className={`font-display text-[40px] leading-[1] font-extrabold tracking-[-0.03em] transition-colors duration-300 ${on ? "text-ink" : "text-ink lg:text-gray"}`}>
+                        {item.title}
+                      </span>
+                      <span
+                        aria-hidden="true"
+                        className={`inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-xl transition-[background-color,color,transform] duration-300 ${
+                          on ? "translate-x-0 bg-red text-white" : "-translate-x-1 bg-paper text-ink group-hover:translate-x-0"
+                        }`}
+                      >
+                        →
+                      </span>
+                    </span>
+                    <span className={`grid transition-[grid-template-rows] duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${on ? "grid-rows-[1fr]" : "grid-rows-[0fr] lg:grid-rows-[0fr]"} max-lg:grid-rows-[1fr]`}>
+                      <span className="overflow-hidden">
+                        <span className="block pt-4 text-lg leading-[1.55] text-ink">{item.body}</span>
+                        <span className="block pt-2 text-[15px] text-gray">{w.demoNote}</span>
+                      </span>
+                    </span>
+                  </button>
+                  {/* Celular: a tela de cada tipo logo abaixo do nome. */}
+                  <div className="mt-3 h-[440px] lg:hidden">
+                    <Fragment ui={w.ui} />
                   </div>
-                </div>
-              </article>
-            );
-          })}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+
+        {/* Computador: uma prévia grande que troca com o tipo ativo. */}
+        <div className="hidden lg:col-span-7 lg:block">
+          <div className="sticky top-28" onMouseMove={onMove} onMouseLeave={onLeave}>
+            <motion.div
+              id="work-preview"
+              aria-live="polite"
+              className="relative h-[600px] rounded-[24px] bg-paper p-6"
+              style={reduced ? undefined : { transform }}
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={active}
+                  className="h-full"
+                  initial={reduced ? { opacity: 0 } : { opacity: 0, y: 24, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={reduced ? { opacity: 0 } : { opacity: 0, y: -16, scale: 0.98 }}
+                  transition={{ duration: 0.35, ease: [0.23, 1, 0.32, 1] }}
+                >
+                  <Active ui={w.ui} />
+                </motion.div>
+              </AnimatePresence>
+            </motion.div>
+          </div>
         </div>
       </div>
     </section>

@@ -80,6 +80,16 @@ body {
   box-shadow: 0 0 0 5px var(--paper); /* taste-skill-ignore: anel de foco, só com teclado */
 }
 
+/* Cursor personalizado (só com mouse e sem movimento reduzido; ver CustomCursor).
+   Campos de texto mantêm o cursor de digitação. */
+.has-custom-cursor,
+.has-custom-cursor * {
+  cursor: none;
+}
+.has-custom-cursor :is(input, textarea, select, [contenteditable="true"]) {
+  cursor: text;
+}
+
 /*
  * Movimento. O estado escondido só existe com JavaScript ativo (classe "js" no <html>,
  * posta por um script inline no layout) e sem pedido de movimento reduzido: sem script,
@@ -114,6 +124,11 @@ body {
   /* Otto da abertura: flutua devagar. */
   .otto-float {
     animation: otto-float 6s var(--ease-in-out) infinite alternate;
+  }
+
+  /* Dica de rolagem da abertura (do layout anterior). */
+  .scroll-drip {
+    animation: scroll-drip 1.8s var(--ease-out) infinite;
   }
 
   /* Faixa de poses do Otto no contato. */
@@ -166,6 +181,20 @@ body {
   }
   to {
     transform: translateY(-14px) rotate(-2deg);
+  }
+}
+
+@keyframes scroll-drip {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(300%);
+    opacity: 0;
   }
 }
 
