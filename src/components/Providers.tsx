@@ -1,15 +1,16 @@
 "use client";
 
 import { LanguageProvider } from "@/lib/i18n/context";
-import { CustomCursor } from "@/components/CustomCursor";
-import { ScrollProgress } from "@/components/ScrollProgress";
+import { HandProvider } from "@/lib/hand";
+import { RevealObserver } from "@/components/RevealObserver";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <LanguageProvider>
-      <ScrollProgress />
-      <CustomCursor />
-      {children}
+      <HandProvider>
+        <RevealObserver />
+        {children}
+      </HandProvider>
     </LanguageProvider>
   );
 }

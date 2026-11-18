@@ -1,143 +1,52 @@
 "use client";
 
-import { Logo } from "./Logo";
+import Image from "next/image";
 import { useLanguage } from "@/lib/i18n/context";
 
+/** Fechamento: a marca volta em toda a largura, com o que a All In faz e o contato. */
 export function Footer() {
   const { t } = useLanguage();
+  const links = [
+    { label: t.nav.services, href: "#services" },
+    { label: t.nav.work, href: "#work" },
+    { label: t.nav.process, href: "#process" },
+    { label: t.nav.about, href: "#about" },
+    { label: t.nav.contact, href: "#contact" },
+  ];
 
   return (
-    <footer className="relative overflow-hidden bg-ink pt-20 pb-8 text-paper">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-[-4%] flex justify-center overflow-hidden opacity-[0.06]"
-      >
-        <Logo variant="mono-light" className="h-auto w-[min(90vw,920px)]" />
-      </div>
-
-      <div className="relative mx-auto max-w-[1400px] px-5 md:px-8 lg:px-10">
-        <div className="grid gap-12 lg:grid-cols-[1.1fr_2fr]">
-          <div>
-            <a href="#top" aria-label="All In home">
-              <Logo variant="light" className="h-9 w-[176px]" />
-            </a>
-            <p className="mt-5 max-w-sm text-sm leading-relaxed text-paper/60">
-              {t.footer.tagline}
-            </p>
-            <div className="mt-6 flex gap-3">
-              {[
-                { label: "Instagram", href: "https://instagram.com" },
-                { label: "LinkedIn", href: "https://linkedin.com" },
-                { label: "Facebook", href: "https://facebook.com" },
-              ].map((s) => (
-                <a
-                  key={s.label}
-                  href={s.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={s.label}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-line-on-dark text-[11px] text-paper/60 transition-colors hover:border-red-on-dark hover:text-paper"
-                >
-                  {s.label.slice(0, 2)}
-                </a>
+    <footer className="bg-ink pt-24 pb-10 text-paper">
+      <div className="mx-auto max-w-[1440px] px-5 md:px-8">
+        <div className="grid gap-10 lg:grid-cols-12">
+          <p className="max-w-[30ch] text-2xl leading-[1.35] lg:col-span-6">{t.footer.line}</p>
+          <nav aria-label={t.nav.primary} className="lg:col-span-2 lg:col-start-7">
+            <ul className="flex flex-col">
+              {links.map((l) => (
+                <li key={l.href}>
+                  <a href={l.href} className="inline-flex min-h-11 items-center text-lg text-paper/85 transition-colors hover:text-paper">
+                    {l.label}
+                  </a>
+                </li>
               ))}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
-            <div>
-              <p className="mb-4 font-mono text-[10px] tracking-[0.18em] text-paper/45 uppercase">
-                {t.footer.navigation}
-              </p>
-              <ul className="space-y-2.5">
-                {t.footer.navLinks.map((link) => (
-                  <li key={link.label}>
-                    <a
-                      href={link.href}
-                      className="text-sm text-paper/70 transition-colors hover:text-paper"
-                    >
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <p className="mb-4 font-mono text-[10px] tracking-[0.18em] text-paper/45 uppercase">
-                {t.footer.services}
-              </p>
-              <ul className="space-y-2.5">
-                {t.footer.serviceLinks.map((label) => (
-                  <li key={label}>
-                    <a
-                      href="#services"
-                      className="text-sm text-paper/70 transition-colors hover:text-paper"
-                    >
-                      {label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <p className="mb-4 font-mono text-[10px] tracking-[0.18em] text-paper/45 uppercase">
-                {t.footer.company}
-              </p>
-              <ul className="space-y-2.5">
-                {t.footer.companyLinks.map((link) => (
-                  <li key={link.label}>
-                    <a
-                      href={link.href}
-                      className="text-sm text-paper/70 transition-colors hover:text-paper"
-                    >
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <p className="mb-4 font-mono text-[10px] tracking-[0.18em] text-paper/45 uppercase">
-                {t.footer.letsTalk}
-              </p>
-              <ul className="space-y-2.5 text-sm text-paper/70">
-                <li>
-                  <a
-                    href="mailto:contato@agenciaallin.com.br"
-                    className="transition-colors hover:text-paper"
-                  >
-                    contato@agenciaallin.com.br
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="tel:+5511989338312"
-                    className="transition-colors hover:text-paper"
-                  >
-                    +55 11 98933-8312
-                  </a>
-                </li>
-                <li className="pt-2">São Paulo · Brasil</li>
-                <li>Miami · EUA</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-16 flex flex-col gap-4 border-t border-line-on-dark pt-6 text-xs text-paper/45 sm:flex-row sm:items-center sm:justify-between">
-          <p>{t.footer.copyright}</p>
-          <div className="flex gap-5">
-            <a href="#contact" className="transition-colors hover:text-paper">
-              {t.footer.privacy}
+            </ul>
+          </nav>
+          <div className="flex flex-col lg:col-span-4 lg:col-start-9">
+            <a href={`mailto:${t.contact.email}`} className="inline-flex min-h-11 items-center text-lg break-words text-paper/85 hover:text-paper">
+              {t.contact.email}
             </a>
-            <a href="#contact" className="transition-colors hover:text-paper">
-              {t.footer.terms}
+            <a href={`tel:${t.contact.phone.replace(/\s/g, "")}`} className="inline-flex min-h-11 items-center text-lg text-paper/85 hover:text-paper">
+              {t.contact.phone}
             </a>
           </div>
         </div>
+
+        <a href="#top" aria-label={t.nav.home} className="mt-20 block">
+          <Image src="/brand/logo-negativo.svg" alt="" width={354} height={198} unoptimized className="h-auto w-[min(100%,980px)]" />
+        </a>
+
+        <p className="mt-8 text-[15px] text-paper/70">
+          © {new Date().getFullYear()} All In. {t.footer.rights}
+        </p>
       </div>
     </footer>
   );
