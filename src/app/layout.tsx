@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono } from "next/font/google";
 import localFont from "next/font/local";
 // globals.css primeiro: declara a ordem das camadas de CSS antes do tema Astryx.
 import "./globals.css";
@@ -20,17 +19,10 @@ const geist = localFont({
   display: "swap",
 });
 
-const plexMono = IBM_Plex_Mono({
-  subsets: ["latin"],
-  variable: "--font-plex-mono",
-  weight: ["500"],
-  display: "swap",
-});
-
 export const metadata: Metadata = {
-  title: "All In — Digital Agency | Websites, Landing Pages & Web Apps",
+  title: "All In | Websites, landing pages and web apps",
   description:
-    "Bilingual digital agency (Brazil + USA) building high-performance websites, landing pages, and web applications for ambitious brands.",
+    "All In builds websites, landing pages and web applications that connect your digital presence, operations and customer intake, in English and Portuguese.",
   icons: {
     icon: "/logo-dark.png",
     apple: "/apple-icon.png",
@@ -58,8 +50,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${bricolage.variable} ${geist.variable} ${plexMono.variable} h-full antialiased`}
+      suppressHydrationWarning
+      className={`${bricolage.variable} ${geist.variable} h-full antialiased`}
     >
+      <head>
+        {/* Marca o documento como "com JavaScript": só então as entradas animadas escondem o conteúdo antes de aparecer. */}
+        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
+      </head>
       <body className="min-h-full font-sans">
         <Providers>{children}</Providers>
       </body>

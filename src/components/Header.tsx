@@ -6,17 +6,10 @@ import { LanguageToggle } from "./LanguageToggle";
 import { MenuOverlay } from "./MenuOverlay";
 import { useLanguage } from "@/lib/i18n/context";
 
+/** Barra simples em carvão: logo, quatro links, idioma e uma ação. */
 export function Header() {
   const { t } = useLanguage();
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -25,71 +18,56 @@ export function Header() {
     };
   }, [open]);
 
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
   const links = [
-    { label: t.nav.work, href: "#work" },
     { label: t.nav.services, href: "#services" },
-    { label: t.nav.about, href: "#about" },
+    { label: t.nav.work, href: "#work" },
     { label: t.nav.process, href: "#process" },
-    { label: t.nav.careers, href: "#contact" },
-    { label: t.nav.contact, href: "#contact" },
+    { label: t.nav.about, href: "#about" },
   ];
 
   return (
     <>
-      <header
-        className={`fixed top-0 right-0 left-0 z-50 transition-colors duration-300 ${
-          scrolled || open
-            ? "border-b border-line-on-dark/40 bg-ink/70 backdrop-blur-xl"
-            : "bg-transparent"
-        }`}
-      >
-        <div className="mx-auto flex h-[72px] max-w-[1400px] items-center justify-between px-5 md:px-8 lg:px-10">
-          <a href="#top" className="relative z-10" aria-label="All In home">
-            <Logo variant="light" priority className="h-8 w-[156px] md:h-9 md:w-[176px]" />
+      <header className="sticky top-0 z-50 bg-ink text-paper">
+        <div className="mx-auto flex h-[72px] max-w-[1440px] items-center justify-between gap-6 px-5 md:px-8">
+          <a href="#top" className="relative z-10 inline-flex min-h-11 items-center" aria-label={t.nav.home}>
+            <Logo variant="light" priority className="h-9 w-auto" />
           </a>
 
-          <nav
-            className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-7 lg:flex"
-            aria-label="Primary"
-          >
+          <nav className="hidden items-center gap-1 lg:flex" aria-label={t.nav.primary}>
             {links.map((link) => (
               <a
-                key={link.href + link.label}
+                key={link.href}
                 href={link.href}
-                className="font-sans text-[13px] text-paper/80 transition-colors hover:text-paper"
+                className="inline-flex min-h-11 items-center rounded-full px-4 text-[15px] text-paper/85 transition-colors duration-200 hover:bg-white/10 hover:text-paper"
               >
                 {link.label}
               </a>
             ))}
           </nav>
 
-          <div className="relative z-10 flex items-center gap-3">
+          <div className="relative z-10 flex items-center gap-2">
             <LanguageToggle />
+            <a
+              href="#contact"
+              className="hidden min-h-11 items-center rounded-full bg-red px-5 text-[15px] font-semibold text-white transition-[background-color,transform] duration-200 hover:bg-red-dark active:scale-[0.97] sm:inline-flex"
+            >
+              {t.nav.cta}
+            </a>
             <button
               type="button"
-              aria-label={open ? t.menu.close : t.menu.open}
+              aria-label={open ? t.nav.close : t.nav.open}
               aria-expanded={open}
               onClick={() => setOpen((v) => !v)}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-line-on-dark text-paper transition-colors hover:border-paper/50"
+              className="inline-flex min-h-11 items-center rounded-full px-4 text-[15px] font-semibold text-paper transition-colors hover:bg-white/10 lg:hidden"
             >
-              <span className="sr-only">{open ? t.menu.close : t.menu.open}</span>
-              <span className="flex w-4 flex-col gap-1.5">
-                <span
-                  className={`h-px w-full bg-current transition-transform duration-300 ${
-                    open ? "translate-y-[3.5px] rotate-45" : ""
-                  }`}
-                />
-                <span
-                  className={`h-px w-full bg-current transition-opacity duration-300 ${
-                    open ? "opacity-0" : ""
-                  }`}
-                />
-                <span
-                  className={`h-px w-full bg-current transition-transform duration-300 ${
-                    open ? "-translate-y-[3.5px] -rotate-45" : ""
-                  }`}
-                />
-              </span>
+              {open ? t.nav.close : t.nav.menu}
             </button>
           </div>
         </div>

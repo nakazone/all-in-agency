@@ -1,135 +1,212 @@
 "use client";
 
-import { useRef } from "react";
+import { AnimatePresence, motion, useMotionTemplate, useMotionValue, useSpring } from "framer-motion";
+import { useState } from "react";
 import { useLanguage } from "@/lib/i18n/context";
+import { useReducedMotion } from "@/lib/hooks/useReducedMotion";
+import type { Dictionary } from "@/lib/i18n/dictionaries";
 
-const themeStyles = {
-  dark: "bg-ink-2 text-paper",
-  red: "bg-red text-white",
-  light: "bg-[#E8EFE6] text-ink",
-  blue: "bg-[#D7E4F0] text-ink",
-} as const;
+type UI = Dictionary["work"]["ui"];
 
-function CaseVisual({ theme }: { theme: keyof typeof themeStyles }) {
-  if (theme === "dark") {
-    return (
-      <div className="relative flex h-full flex-col justify-end p-2">
-        <div className="absolute inset-6 rounded-lg border border-white/10 bg-ink/60" />
-        <div className="absolute top-10 right-10 left-10 h-16 rounded bg-white/5" />
-        <div className="absolute right-10 bottom-16 left-10 space-y-2">
-          <div className="h-1.5 w-2/3 rounded bg-red/80" />
-          <div className="h-1.5 w-1/2 rounded bg-white/15" />
-        </div>
-      </div>
-    );
-  }
-  if (theme === "red") {
-    return (
-      <div className="relative flex h-full items-center justify-center">
-        <div className="h-24 w-24 rounded-full border border-white/30" />
-        <div className="absolute h-12 w-12 rounded-full bg-white/20" />
-      </div>
-    );
-  }
-  if (theme === "light") {
-    return (
-      <div className="relative flex h-full items-end justify-center pb-6">
-        <div className="h-28 w-20 rounded-t-full bg-[#3D7A4A]/70" />
-        <div className="absolute bottom-4 h-3 w-28 rounded-full bg-[#2F5C38]/40" />
-      </div>
-    );
-  }
+/* Fragmentos de interface montados em HTML com textos reais (data-ui: bordas e menus próprios do produto). */
+
+function SiteFragment({ ui }: { ui: UI }) {
   return (
-    <div className="relative flex h-full items-end overflow-hidden">
-      <div className="absolute inset-x-8 top-10 h-40 origin-bottom -skew-x-6 bg-[#6B8FB5]/50" />
-      <div className="absolute inset-x-16 top-16 h-36 origin-bottom skew-x-3 bg-[#4A6F94]/60" />
+    <div data-ui className="flex h-full flex-col overflow-hidden rounded-[24px] bg-paper text-ink">
+      <div className="flex items-center justify-between bg-ink px-6 py-4 text-paper">
+        <span className="font-display text-xl font-extrabold">Casa Piso</span>
+        <span className="hidden gap-6 text-sm sm:flex">
+          {ui.siteNav.map((n) => (
+            <span key={n}>{n}</span>
+          ))}
+        </span>
+      </div>
+      <div className="grid flex-1 gap-6 p-8 sm:grid-cols-[1.2fr_1fr] sm:p-10">
+        <div className="flex flex-col justify-end gap-5">
+          <p className="font-display text-[clamp(26px,2.4vw,36px)] leading-[1] font-extrabold tracking-[-0.03em]">{ui.siteTitle}</p>
+          <p className="text-base text-gray">{ui.siteBody}</p>
+          <span className="inline-flex w-fit rounded-full bg-red px-5 py-3 text-sm font-semibold text-white">{ui.siteCta}</span>
+        </div>
+        <ul className="flex flex-col justify-start gap-2 self-end rounded-[16px] bg-petroleo-soft p-5 text-base font-semibold">
+          {ui.siteServices.map((s) => (
+            <li key={s} className="rounded-xl bg-white px-4 py-3">
+              {s}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
 
+function LandingFragment({ ui }: { ui: UI }) {
+  return (
+    <div data-ui className="flex h-full flex-col justify-between overflow-hidden rounded-[24px] bg-red p-8 text-white sm:p-10">
+      <p className="font-display text-[clamp(26px,2.4vw,36px)] leading-[1] font-extrabold tracking-[-0.03em]">{ui.lpTitle}</p>
+      <div className="mt-8 grid gap-3 rounded-[16px] bg-white p-5 text-ink sm:grid-cols-[1fr_1fr_auto] sm:items-end">
+        <label className="flex flex-col gap-1 text-sm font-medium">
+          {ui.lpName}
+          <span className="h-11 rounded-lg border border-line-control" />
+        </label>
+        <label className="flex flex-col gap-1 text-sm font-medium">
+          {ui.lpPhone}
+          <span className="h-11 rounded-lg border border-line-control" />
+        </label>
+        <span className="inline-flex h-11 items-center justify-center rounded-full bg-ink px-5 text-sm font-semibold text-white">{ui.lpCta}</span>
+      </div>
+    </div>
+  );
+}
+
+function PortalFragment({ ui }: { ui: UI }) {
+  const rows = [
+    { label: ui.appNow, value: ui.appNowValue, tone: "bg-paper" },
+    { label: ui.appYou, value: ui.appYouValue, tone: "bg-red-soft" },
+    { label: ui.appNext, value: ui.appNextValue, tone: "bg-petroleo-soft" },
+  ];
+  return (
+    <div data-ui className="flex h-full overflow-hidden rounded-[24px] bg-white text-ink">
+      <div className="hidden w-[30%] flex-col gap-3 bg-ink p-6 text-sm text-paper/85 sm:flex">
+        <span className="mb-4 font-display text-lg font-extrabold text-paper">All In</span>
+        {ui.appNav.map((x, i) => (
+          <span key={x} className={`rounded-lg px-3 py-2 ${i === 0 ? "bg-white/10 text-paper" : ""}`}>
+            {x}
+          </span>
+        ))}
+      </div>
+      <div className="flex flex-1 flex-col gap-4 p-6 sm:p-8">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="font-display text-2xl font-extrabold tracking-[-0.02em]">{ui.appTitle}</p>
+          <span className="rounded-full bg-petroleo px-3 py-1 text-sm font-semibold text-white">{ui.appStatus}</span>
+        </div>
+        <div>
+          <div className="flex gap-1.5" aria-hidden="true">
+            {[0, 1, 2, 3, 4].map((i) => (
+              <span key={i} className={`h-2 flex-1 rounded-full ${i < 3 ? "bg-petroleo" : "bg-paper"}`} />
+            ))}
+          </div>
+          <p className="mt-2 text-sm text-gray">{ui.appProgress}</p>
+        </div>
+        {rows.map((r) => (
+          <div key={r.label} className={`rounded-[16px] p-4 ${r.tone}`}>
+            <p className="text-sm text-gray">{r.label}</p>
+            <p className="text-lg font-semibold">{r.value}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const fragments = [SiteFragment, LandingFragment, PortalFragment];
+
+/**
+ * Como fica na prática: vitrine interativa. À esquerda, os três tipos de entrega; à direita,
+ * a tela do tipo ativo, que troca ao passar o mouse, focar ou tocar, e inclina levemente
+ * com o ponteiro. No celular, cada tipo aparece com a sua tela logo abaixo.
+ */
 export function Work() {
   const { t } = useLanguage();
-  const trackRef = useRef<HTMLDivElement>(null);
+  const w = t.work;
+  const reduced = useReducedMotion();
+  const [active, setActive] = useState(0);
+  const tiltX = useMotionValue(0);
+  const tiltY = useMotionValue(0);
+  const sx = useSpring(tiltX, { stiffness: 160, damping: 18 });
+  const sy = useSpring(tiltY, { stiffness: 160, damping: 18 });
+  const transform = useMotionTemplate`perspective(1600px) rotateX(${sx}deg) rotateY(${sy}deg)`;
+  const Active = fragments[active];
 
-  const scrollBy = (dir: number) => {
-    const el = trackRef.current;
-    if (!el) return;
-    const card = el.querySelector<HTMLElement>("[data-case-card]");
-    const amount = card ? card.offsetWidth + 24 : 320;
-    el.scrollBy({ left: dir * amount, behavior: "smooth" });
+  const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (reduced) return;
+    const r = e.currentTarget.getBoundingClientRect();
+    tiltY.set(((e.clientX - r.left) / r.width - 0.5) * 8);
+    tiltX.set(-((e.clientY - r.top) / r.height - 0.5) * 6);
+  };
+  const onLeave = () => {
+    tiltX.set(0);
+    tiltY.set(0);
   };
 
   return (
-    <section id="work" className="bg-paper py-20 text-ink md:py-28">
-      <div className="mx-auto max-w-[1400px] px-5 md:px-8 lg:px-10">
-        <div className="mb-10 flex flex-wrap items-end justify-between gap-6">
-          <div>
-            <p className="font-mono text-xs tracking-[0.18em] text-petroleo">
-              {t.work.eyebrow}
-            </p>
-            <h2 className="mt-4 font-display text-[clamp(2.4rem,5vw,4.5rem)] leading-[1.05] font-semibold tracking-tight">
-              {t.work.title}
-            </h2>
-            <a
-              href="#contact"
-              className="mt-5 inline-flex text-sm text-petroleo underline-offset-4 transition-colors hover:underline"
-            >
-              {t.work.viewAll}
-            </a>
-          </div>
+    <section id="work" aria-labelledby="work-title" className="bg-white py-28 text-ink md:py-40">
+      <div className="mx-auto grid max-w-[1440px] gap-12 px-5 md:px-8 lg:grid-cols-12 lg:gap-6">
+        <div className="lg:col-span-5">
+          <h2 id="work-title" data-reveal className="font-display text-[clamp(40px,5vw,76px)] leading-[0.95] font-extrabold tracking-[-0.04em]">
+            {w.title}
+          </h2>
+          <p data-reveal style={{ "--i": 1 } as React.CSSProperties} className="mt-6 max-w-[40ch] text-lg leading-[1.55]">
+            {w.lead}
+          </p>
 
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => scrollBy(-1)}
-              aria-label={t.work.prev}
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-line text-ink transition-colors hover:border-petroleo hover:text-petroleo"
-            >
-              ←
-            </button>
-            <button
-              type="button"
-              onClick={() => scrollBy(1)}
-              aria-label={t.work.next}
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-line text-ink transition-colors hover:border-petroleo hover:text-petroleo"
-            >
-              →
-            </button>
-          </div>
+          <ul className="mt-10 flex flex-col gap-3">
+            {w.items.map((item, i) => {
+              const on = active === i;
+              const Fragment = fragments[i];
+              return (
+                <li key={item.id} data-reveal style={{ "--i": i + 2 } as React.CSSProperties}>
+                  <button
+                    type="button"
+                    aria-pressed={on}
+                    aria-controls="work-preview"
+                    onMouseEnter={() => setActive(i)}
+                    onFocus={() => setActive(i)}
+                    onClick={() => setActive(i)}
+                    className={`group w-full rounded-[24px] p-6 text-left transition-colors duration-300 ${on ? "bg-paper" : "hover:bg-paper/60"}`}
+                  >
+                    <span className="flex items-center justify-between gap-4">
+                      <span className={`font-display text-[40px] leading-[1] font-extrabold tracking-[-0.03em] transition-colors duration-300 ${on ? "text-ink" : "text-ink lg:text-gray"}`}>
+                        {item.title}
+                      </span>
+                      <span
+                        aria-hidden="true"
+                        className={`inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-xl transition-[background-color,color,transform] duration-300 ${
+                          on ? "translate-x-0 bg-red text-white" : "-translate-x-1 bg-paper text-ink group-hover:translate-x-0"
+                        }`}
+                      >
+                        →
+                      </span>
+                    </span>
+                    <span className={`grid transition-[grid-template-rows] duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${on ? "grid-rows-[1fr]" : "grid-rows-[0fr] lg:grid-rows-[0fr]"} max-lg:grid-rows-[1fr]`}>
+                      <span className="overflow-hidden">
+                        <span className="block pt-4 text-lg leading-[1.55] text-ink">{item.body}</span>
+                        <span className="block pt-2 text-[15px] text-gray">{w.demoNote}</span>
+                      </span>
+                    </span>
+                  </button>
+                  {/* Celular: a tela de cada tipo logo abaixo do nome. */}
+                  <div className="mt-3 h-[440px] lg:hidden">
+                    <Fragment ui={w.ui} />
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
         </div>
 
-        {/* placeholder — substituir por cases reais */}
-        <div
-          ref={trackRef}
-          className="no-scrollbar -mx-5 flex snap-x snap-mandatory gap-6 overflow-x-auto px-5 md:-mx-0 md:px-0"
-        >
-          {t.work.cases.map((item) => (
-            <article
-              key={item.name}
-              data-case-card
-              className={`flex w-[82vw] shrink-0 snap-center flex-col overflow-hidden rounded-2xl sm:w-[340px] md:w-[360px] ${themeStyles[item.theme]}`}
+        {/* Computador: uma prévia grande que troca com o tipo ativo. */}
+        <div className="hidden lg:col-span-7 lg:block">
+          <div className="sticky top-28" onMouseMove={onMove} onMouseLeave={onLeave}>
+            <motion.div
+              id="work-preview"
+              aria-live="polite"
+              className="relative h-[600px] rounded-[24px] bg-paper p-6"
+              style={reduced ? undefined : { transform }}
             >
-              <div className="relative h-56 md:h-64">
-                <CaseVisual theme={item.theme} />
-              </div>
-              <div className="mt-auto flex items-end justify-between gap-3 p-5">
-                <div>
-                  <p className="font-display text-xl font-semibold">
-                    {item.name}
-                  </p>
-                  <p className="mt-1 font-mono text-[10px] tracking-wider uppercase opacity-70">
-                    {item.tag}
-                  </p>
-                </div>
-                <a
-                  href="#contact"
-                  className="text-sm whitespace-nowrap opacity-80 transition-opacity hover:opacity-100"
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={active}
+                  className="h-full"
+                  initial={reduced ? { opacity: 0 } : { opacity: 0, y: 24, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={reduced ? { opacity: 0 } : { opacity: 0, y: -16, scale: 0.98 }}
+                  transition={{ duration: 0.35, ease: [0.23, 1, 0.32, 1] }}
                 >
-                  {t.work.viewProject}
-                </a>
-              </div>
-            </article>
-          ))}
+                  <Active ui={w.ui} />
+                </motion.div>
+              </AnimatePresence>
+            </motion.div>
+          </div>
         </div>
       </div>
     </section>

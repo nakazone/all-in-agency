@@ -49,3 +49,4 @@ next-env.d.ts
 .claude/skills/impeccable/scripts/bin/
 .claude/worktrees/
 .agents/skills/impeccable/scripts/bin/
+.taste-skill/

@@ -54,7 +54,6 @@
   --color-petroleo-soft: var(--petroleo-soft);
   --font-display: var(--font-bricolage);
   --font-sans: var(--font-geist);
-  --font-mono: var(--font-plex-mono);
 }
 
 html {
@@ -62,8 +61,8 @@ html {
 }
 
 body {
-  background: var(--ink);
-  color: var(--paper);
+  background: var(--paper);
+  color: var(--ink);
   font-family: var(--font-geist), Arial, sans-serif;
   overflow-x: hidden;
 }
@@ -78,39 +77,110 @@ body {
 :focus-visible {
   outline: 2px solid var(--petroleo);
   outline-offset: 2px;
-  box-shadow: 0 0 0 5px var(--paper);
+  box-shadow: 0 0 0 5px var(--paper); /* taste-skill-ignore: anel de foco, só com teclado */
 }
 
-@media (hover: hover) and (pointer: fine) {
-  body.has-custom-cursor,
-  body.has-custom-cursor * {
-    cursor: none !important;
-  }
+/* Cursor personalizado (só com mouse e sem movimento reduzido; ver CustomCursor).
+   Campos de texto mantêm o cursor de digitação. */
+.has-custom-cursor,
+.has-custom-cursor * {
+  cursor: none;
+}
+.has-custom-cursor :is(input, textarea, select, [contenteditable="true"]) {
+  cursor: text;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
+/*
+ * Movimento. O estado escondido só existe com JavaScript ativo (classe "js" no <html>,
+ * posta por um script inline no layout) e sem pedido de movimento reduzido: sem script,
+ * todo o conteúdo aparece. Só transform e opacity.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  /* Título: cada linha sobe de trás da própria linha de base. */
+  .js .mask-line > span {
+    display: inline-block;
+    animation: line-rise 900ms var(--ease-out) both;
+    animation-delay: calc(var(--i, 0) * 110ms + 80ms);
+  }
+  .js .after-lines {
+    animation: fade-up 700ms var(--ease-out) both;
+    animation-delay: 420ms;
   }
 
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+  /* Entrada das partes de cada seção, em sequência (--i), uma vez. */
+  .js [data-reveal] {
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+      opacity 700ms var(--ease-out),
+      transform 700ms var(--ease-out);
+    transition-delay: calc(var(--i, 0) * 75ms);
   }
-}
-
-@keyframes pulse-dot {
-  0%,
-  100% {
+  .js [data-reveal].is-in {
     opacity: 1;
-    transform: scale(1);
+    transform: none;
   }
-  50% {
-    opacity: 0.45;
-    transform: scale(0.85);
+
+  /* Otto da abertura: flutua devagar. */
+  .otto-float {
+    animation: otto-float 6s var(--ease-in-out) infinite alternate;
+  }
+
+  /* Dica de rolagem da abertura (do layout anterior). */
+  .scroll-drip {
+    animation: scroll-drip 1.8s var(--ease-out) infinite;
+  }
+
+  /* Faixa de poses do Otto no contato. */
+  .marquee-track {
+    animation: marquee 60s linear infinite;
+  }
+  .marquee:hover .marquee-track,
+  .marquee:focus-within .marquee-track {
+    animation-play-state: paused;
+  }
+}
+
+/* A trilha da faixa é muito mais larga que a tela: o contêiner a recorta e a isola,
+   para o navegador do celular não alargar a página por causa dela. */
+.marquee {
+  overflow: hidden;
+  contain: paint;
+}
+
+.mask-line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.06em;
+  margin-bottom: -0.06em;
+}
+
+@keyframes line-rise {
+  from {
+    transform: translateY(105%);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes otto-float {
+  from {
+    transform: translateY(0) rotate(-4deg);
+  }
+  to {
+    transform: translateY(-14px) rotate(-2deg);
   }
 }
 
@@ -123,31 +193,22 @@ body {
     opacity: 1;
   }
   100% {
-    transform: translateY(220%);
+    transform: translateY(300%);
     opacity: 0;
   }
 }
 
-.pulse-dot {
-  animation: pulse-dot 1.6s var(--ease-in-out) infinite;
-}
-
-.scroll-drip {
-  animation: scroll-drip 1.8s var(--ease-out) infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .pulse-dot,
-  .scroll-drip {
-    animation: none;
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
   }
 }
 
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
