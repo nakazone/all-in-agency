@@ -1,10 +1,12 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { MagneticButton } from "./MagneticButton";
 import { Logo } from "./Logo";
 import { LanguageToggle } from "./LanguageToggle";
 import { useLanguage } from "@/lib/i18n/context";
+import { legalContent, legalPaths, type LegalKey } from "@/lib/content/legal";
 
 const linkClass =
   "group relative inline-flex min-h-11 w-fit items-center text-lg text-paper/80 transition-colors duration-200 hover:text-paper";
@@ -14,19 +16,22 @@ const underline =
 
 /**
  * Fechamento: uma chamada final com o Otto acenando, colunas de navegação, serviços e
- * contato, e a barra com os direitos e o "voltar ao topo". A marca d'água do ambigrama
- * vem do layout anterior.
+ * contato, e a barra com os direitos, os documentos legais e o "voltar ao topo". A marca
+ * d'água do ambigrama vem do layout anterior. Os links da home levam "/" para servirem
+ * também nas outras páginas.
  */
 export function Footer() {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const f = t.footer;
   const nav = [
-    { label: t.nav.services, href: "#services" },
-    { label: t.nav.work, href: "#work" },
-    { label: t.nav.process, href: "#process" },
-    { label: t.nav.about, href: "#about" },
-    { label: t.nav.contact, href: "#contact" },
+    { label: t.nav.services, href: "/#services" },
+    { label: t.nav.ugc, href: "/ugc" },
+    { label: t.nav.work, href: "/#work" },
+    { label: t.nav.process, href: "/#process" },
+    { label: t.nav.about, href: "/#about" },
+    { label: t.nav.contact, href: "/#contact" },
   ];
+  const legal = (Object.keys(legalPaths) as LegalKey[]).map((k) => ({ label: legalContent[locale][k].title, href: legalPaths[k] }));
 
   return (
     <footer className="relative overflow-hidden bg-ink text-paper">
@@ -61,9 +66,9 @@ export function Footer() {
         {/* Colunas */}
         <div className="grid gap-12 rounded-[24px] bg-white/5 p-8 sm:grid-cols-2 md:p-10 lg:grid-cols-12 lg:gap-6">
           <div className="flex flex-col gap-5 lg:col-span-4">
-            <a href="#top" aria-label={t.nav.home} className="inline-flex min-h-11 w-fit items-center">
+            <Link href="/" aria-label={t.nav.home} className="inline-flex min-h-11 w-fit items-center">
               <Logo variant="light" className="h-12 w-auto" />
-            </a>
+            </Link>
             <p className="max-w-[30ch] text-lg leading-[1.5] text-paper/80">{f.line}</p>
             <LanguageToggle className="w-fit" />
           </div>
@@ -73,9 +78,9 @@ export function Footer() {
             <ul className="mt-3 flex flex-col">
               {nav.map((l) => (
                 <li key={l.href}>
-                  <a href={l.href} className={`${linkClass} ${underline}`}>
+                  <Link href={l.href} className={`${linkClass} ${underline}`}>
                     {l.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -86,11 +91,16 @@ export function Footer() {
             <ul className="mt-3 flex flex-col">
               {t.hand.cards.map((c) => (
                 <li key={c.id}>
-                  <a href="#services" className={`${linkClass} ${underline}`}>
+                  <Link href="/#services" className={`${linkClass} ${underline}`}>
                     {c.name}
-                  </a>
+                  </Link>
                 </li>
               ))}
+              <li>
+                <Link href="/ugc" className={`${linkClass} ${underline}`}>
+                  {t.nav.ugc}
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -114,9 +124,20 @@ export function Footer() {
 
         {/* Barra final */}
         <div className="flex flex-col gap-4 py-10 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-[15px] text-paper/70">
-            © {new Date().getFullYear()} All In. {f.rights}
-          </p>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-6">
+            <p className="text-[15px] text-paper/70">
+              © {new Date().getFullYear()} All In. {f.rights}
+            </p>
+            <ul className="flex flex-wrap gap-x-5">
+              {legal.map((l) => (
+                <li key={l.href}>
+                  <Link href={l.href} className="inline-flex min-h-11 items-center text-[15px] text-paper/70 underline-offset-4 hover:text-paper hover:underline">
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
           <a
             href="#top"
             className="group inline-flex min-h-11 w-fit items-center gap-3 rounded-full bg-white/10 px-5 text-[15px] font-semibold transition-colors duration-200 hover:bg-white/20"
