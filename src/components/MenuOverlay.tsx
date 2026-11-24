@@ -8,18 +8,22 @@ import { useReducedMotion } from "@/lib/hooks/useReducedMotion";
 type MenuOverlayProps = {
   open: boolean;
   onClose: () => void;
+  ctaHref: string;
 };
 
-/** Menu do celular: as seções em tipo grande, a ação principal e o contato direto. */
-export function MenuOverlay({ open, onClose }: MenuOverlayProps) {
+/**
+ * Menu do celular: cinco destinos em tipo grande, a ação principal e o contato direto.
+ * O contato não entra na lista porque a ação principal já leva até ele.
+ */
+export function MenuOverlay({ open, onClose, ctaHref }: MenuOverlayProps) {
   const { t } = useLanguage();
   const reduced = useReducedMotion();
   const links = [
-    { label: t.nav.services, href: "#services" },
-    { label: t.nav.work, href: "#work" },
-    { label: t.nav.process, href: "#process" },
-    { label: t.nav.about, href: "#about" },
-    { label: t.nav.contact, href: "#contact" },
+    { label: t.nav.services, href: "/#services" },
+    { label: t.nav.ugc, href: "/ugc" },
+    { label: t.nav.work, href: "/#work" },
+    { label: t.nav.process, href: "/#process" },
+    { label: t.nav.about, href: "/#about" },
   ];
 
   return (
@@ -57,7 +61,7 @@ export function MenuOverlay({ open, onClose }: MenuOverlayProps) {
             <div className="mt-auto flex items-end justify-between gap-4 pt-10">
               <div className="flex flex-col gap-4">
                 <a
-                  href="#contact"
+                  href={ctaHref}
                   onClick={onClose}
                   className="inline-flex min-h-12 w-fit items-center rounded-full bg-red px-6 text-base font-semibold text-white"
                 >

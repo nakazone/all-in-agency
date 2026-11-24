@@ -9,6 +9,7 @@ export const dictionaries = {
     meta: { skip: "Pular para o conteúdo" },
     nav: {
       services: "Serviços",
+      ugc: "UGC",
       work: "Exemplos",
       process: "Processo",
       about: "Sobre",
@@ -207,6 +208,7 @@ export const dictionaries = {
     meta: { skip: "Skip to content" },
     nav: {
       services: "Services",
+      ugc: "UGC",
       work: "Examples",
       process: "Process",
       about: "About",
